@@ -1,0 +1,75 @@
+[credential "https://gitlab.rapidimages.se"]
+	provider = generic
+[core]
+	editor = code --wait
+	autocrlf = input
+	pager = cat
+	excludesFile = ~/.gitignore
+[alias]
+	co = checkout
+	cob = checkout -b
+	coo = !git fetch && git checkout
+	br = branch
+	amend = commit --amend -m
+	caa = commit --amend -C HEAD
+	alias = "!git config -l | grep alias | cut -c 7-"
+	subinit = submodule update --init --recursive
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	sshow = "!f() { git stash show stash^{/$*} -p; }; f"
+	sapply = "!f() { git stash apply stash^{/$*}; }; f"
+	ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+	diff-noline = diff --ignore-cr-at-eol
+[rerere]
+	enabled = true
+	autoupdate = true
+[pull]
+	rebase = true
+[user]
+	name = Johan Forsgren
+	email = jforsgren@rapidimages.se
+[push]
+	default = simple
+	followTags = true
+	autoSetupRemote = true
+[branch]
+  autosetuprebase = always
+	sort = -committerdate
+[branch "master"]
+  rebase = true
+  mergeoptions = --no-ff
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    dark = true      # or light = true, or omit for auto-detection
+
+[merge]
+    conflictStyle = zdiff3
+[branch "develop"]
+  rebase = true
+  mergeoptions = --no-ff
+# [credential]
+# 	helper = cache
+[init]
+	defaultBranch = main
+[column]
+	ui = auto
+[tag]
+	sort = version:refname
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+[help]
+	autocorrect = prompt
+[commit]
+	verbose = true
+	template = /Users/johanforsgren/DEV/notes/setup/.git-commit-message.txt
+[rebase]
+	updateRefs = true

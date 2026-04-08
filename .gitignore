@@ -1,0 +1,7 @@
+.DS_Store
+.env
+CLAUDE.md
+.claude/
+_tasks/
+_tmp/
+_docs/

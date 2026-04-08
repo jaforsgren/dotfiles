@@ -1,0 +1,71 @@
+let mapleader=" "
+
+
+# which key 
+
+set which-key
+set timeoutlen=1000
+
+" Search
+nnoremap <leader><leader> :action GotoFile<CR>
+nnoremap <leader>sg :action FindInPath<CR>
+
+" Explorer
+nnoremap <C-e> :action ActivateProjectToolWindow<CR>:action SelectInProjectView<CR>
+nnoremap <leader>e :action ActivateProjectToolWindow<CR>:action SelectInProjectView<CR>
+
+nnoremap  <C-x>:action HideActiveWindow<CR>
+nnoremap <C-w> :action CloseContent<CR>
+
+
+
+
+
+" References
+" nnoremap <leader>r :action FindUsages<CR>
+nnoremap <leader>r :action ShowUsages<CR>
+nnoremap <C-r> :action ShowUsages<CR>
+nnoremap gd :action GotoDeclaration<CR>
+nnoremap gi :action GotoImplementation<CR>
+
+
+
+" Debug
+
+nnoremap <leader>dc :action Resume<CR>
+nnoremap <leader>db :action ToggleLineBreakpoint<CR>
+nnoremap <leader>dx :action Stop<CR>
+
+
+nnoremap <leader>du :action ActivateDebugToolWindow<CR>
+nnoremap <leader>dt :action ActivateTerminalToolWindow<CR>
+
+
+
+" Terminal
+nnoremap <D-d> :action ActivateTerminalToolWindow<CR>
+
+" Fullscreen editor
+nnoremap <D-S-CR> :action HideAllWindows<CR>
+
+
+# comment 
+nnoremap gcc :action CommentByLineComment<CR>
+vnoremap gc :action CommentByLineComment<CR>
+
+
+# code actiosn 
+nnoremap  <leader>ca :action ShowIntentionActions<CR>
+nnoremap <leader>cr :action Refactorings.QuickListPopupAction<CR>
+
+
+
+# view (BROKEN)
+
+nnoremap <D-S-Right> :action FocusNextToolWindow<CR>
+nnoremap <D-S-Left>  :action FocusPreviousToolWindow<CR>
+
+
+
+
+

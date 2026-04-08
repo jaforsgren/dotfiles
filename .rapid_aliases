@@ -1,0 +1,157 @@
+
+# RAPID alia
+# --------------------------------------------------------------------------
+alias cd-3rd="cd-dev && cd THIRDPARTY"
+alias cd-three="cd-3rd && cd three.js"
+
+alias cd-test="cd /Volumes/dev/ri-rs/DPD/scripts/test/forsgren"
+alias cd-develop="cd /Volumes/dev/ri-rs/DPD/scripts/develop/vrscene_builder"
+alias cd-staging="cd /Volumes/dev/ri-rs/DPD/scripts/staging/vrscene_builder"
+alias cd-prod="cd /Volumes/dev/ri-rs/DPD/scripts/production/vrscene_builder"
+alias cd-materialbank="cd /Volumes/dev/ri-rs/DPD/materialbank"
+alias cd-desk="cd ~/Desktop"
+alias cd-dpddocs="cd ~/Documents/dpd_docs"
+alias cd-dpd-docs="cd ~/Documents/dpd_docs"
+alias cd-assetdb="cd-dev && cd ASSETDB"
+alias cd-dpd="cd-dev && cd DPD/DPD"
+alias cd-job="cd-dev && cd NEW_DPD/IIG-RPD-VPD-dpd-stack/packages/jobmanager"
+alias cd-temporary="cd /Volumes/temporary"
+alias cd-tmp="cd-temporary"
+alias cd-temp="cd-temporary"
+alias cd-scripts="cd /Volumes/renderfarm_scripts"
+alias cd-tool="cd /Volumes/dev/toolshed/python3"
+alias cd-build="cd-dev && cd DPD/vrscene_builder"
+alias cd-convert="cd-dev && cd DPD/cad-converter"
+alias cd-go="cd-upp && cd libs/go3dthree"
+
+# Upplysa
+# --------------------------------------------------------------------------
+alias cd-upp="cd-dev && cd upplysa"
+alias cd-mm="cd-upp && cd ./packages/modelmanager"
+alias cd-rm="cd-upp && cd ./packages/resourcemanager"
+alias cd-am="cd-upp && cd ./packages/assetmanager"
+alias cd-apm="cd-upp && cd ./packages/appearancemanager"
+alias cd-a="cd-upp && cd ./packages/appearances"
+alias cd-app="cd-a"
+alias cd-shared="cd-upp && cd ./packages/shared"
+alias cd-types="cd-upp && cd ./packages/types"
+alias cd-t="cd-types"
+alias cd-jm="cd-upp && cd ./packages/jobmanager"
+alias cd-jmp="cd-upp && cd ./packages/deadlinepoll"
+alias cd-dp="cd-upp && cd ./packages/deadlinepoll"
+alias cd-sm="cd-upp && cd ./packages/storagemanager"
+alias cd-api="cd-upp && cd ./packages/api"
+alias cd-p="cd-upp && cd ./packages/portal"
+alias cd-e="cd-upp && cd ./packages/editor"
+alias cd-cfm="cd-upp && cd ./packages/cfm"
+alias cd-w="cd-upp && cd ./packages/windchill"
+alias cd-db="cd-upp && cd ./packages/dbclient"
+alias cd-ev="cd-upp && cd ./packages/eventmanager"
+alias start-e="cd-upp && start:local:editor"
+alias start-p="cd-p && start:local:portal"
+
+alias start-fe="npm run start:webpack"
+alias start-portal="cd-upp && npm run start:local portal"
+alias start-editor="cd-upp && npm run start:local editor"
+alias start-p="start-portal"
+alias start-e="start-editor"
+
+alias startmm="cd-upp && pnpm run start:local modelmanager"
+alias startapm="cd-upp && pnpm run start:local appearancemanager"
+alias startam="cd-upp && pnpm run start:local assetmanager"
+alias starta="cd-upp && pnpm run start:local appearances"
+alias startsm="cd-upp && pnpm run start:local storagemanager"
+alias startapi="cd-upp && pnpm run start:local api"
+alias startjm="cd-upp && pnpm run start:local jobmanager"
+alias startjmp="cd-upp && pnpm run start:local deadline-poll"
+alias startrm="cd-upp && pnpm run start:local resourcemanager"
+alias startw="cd-upp && pnpm run start:local windchill"
+alias startcfm="cd-upp && pnpm run start:local cfm"
+alias startevent="cd-upp && pnpm run start:local eventmanager"
+alias startev="cd-upp && pnpm run start:local eventmanager"
+alias startload="cd-upp && pnpm run start:local loadtest"
+alias starte="start-editor"
+alias kille="lsof -i :3002 | grep LISTEN | awk '{print $2}' | xargs kill"
+alias startp="start-portal"
+alias buildDB="cd-upp && pnpm nx build @inter-ikea/upplysa-dbclient"
+alias buildMiddlewares="cd-upp && pnpm nx build @inter-ikea/upplysa-middlewares && pnpm --filter @inter-ikea/upplysa-eventstore run build:shared"
+alias build="buildMiddlewares && buildDB "
+
+alias dmm="cd-upp && pnpm run start:debug modelmanager"
+alias dam="cd-upp && pnpm run start:debug appearancemanager"
+alias dsm="cd-upp && pnpm run start:debug storagemanager"
+alias dapi="cd-upp && pnpm run start:debug api"
+alias djm="cd-upp && pnpm run start:debug jobmanager"
+alias djmp="cd-upp && pnpm run start:debug deadline-poll"
+alias drm="cd-upp && pnpm run start:debug resourcemanager"
+alias dw="cd-upp && pnpm run start:debug windchill"
+alias dcfm="cd-upp && pnpm run start:debug cfm"
+
+alias logjm="logs jobmanager"
+alias logjmp="logs deadline-poll"
+alias logdp="logs deadline-poll"
+alias logapm="logs appearancemanager"
+alias loga="logs appearances"
+alias logmm="logs modelmanager"
+alias logsm="logs storagemanager"
+alias logam="logs assetmanager"
+alias logapi="logs api"
+alias logcfm="logs cfm"
+alias logw="logs windchill"
+alias logload="logs loadtest"
+alias logev="logs eventmanager"
+
+# farm aliases
+# --------------------------------------------------------------------------
+alias rf="ssh nodeuser@172.16.24.13"
+alias ssh1="ssh nodeuser@172.16.24.13"
+alias ssh43="ssh nodeuser@rf-gen4-043"
+alias swarm="ssh 172.16.24.34  -l root" # IP 172.16.24.34
+alias swarm44="ssh rf-gen4-044  -l root"
+alias swarm64="ssh rf-gen4-064  -l root"
+
+alias dpd-i="cd-dpd && rm -rf node_modules && npm i && cd src/web/ && rm -rf node_modules && npm i && cd d:dev/dpd2"
+# k9s and k8s
+# --------------------------------------------------------------------------
+alias k9sconf="nvim $HOME/Library/Application Support/k9s/config.yml"
+
+alias kubetest="az aks get-credentials --resource-group rg-upplysa-test --name aks-upplysa-test"
+alias kubedev="az aks get-credentials --resource-group rg-upplysa-dev --name aks-upplysa-dev"
+
+#kubectl contexts
+# --------------------------------------------------------------------------
+alias get-ctx="kubectl config get-contexts"
+alias contestdocker="kubectl config use-context docker-desktop"
+alias contestUpplysa="kubectl config use-context aks-upplysa-dev"
+alias contestUpplysatest="kubectl config use-context aks-upplysa-test"
+alias upplysa-dev="kubedev && contestUpplysa"
+alias upplysa-test="kubetest && contestUpplysatest"
+
+alias set-ctx-docker=contestdocker
+alias set-ctx-upplysa=contestUpplysa
+# azure aliases
+# --------------------------------------------------------------------------
+alias azureitestart="azurite --silent --location c:\azurite --debug c:\tmp\azurite_debug.log"
+alias azlogin="az login --scope https://management.core.windows.net//.default"
+alias azloginjf="az login -u johndoe@contoso.com -p VerySecret"
+alias set-upplysa="az account set -s cbrs-upplysa-nonprd"
+alias set-upplysa="az account set -s cbrs-upplysa-nonprd"
+alias set-pilot="az account set -s cbrs-upplysa-pilot-prod"
+alias set-dpd="az account set -s cbrs-dpd-prd"
+alias allKubeTest="kubedev && set-upplysa" # TMP all in one go!
+
+# mount point
+# --------------------------------------------------------------------------
+alias mountCMD="mount_smbfs //user@SERVER/folder ./mntpoint"
+alias mountDev="open smb://shared-fs2.office.rapidimages.se/dev"
+alias mountTemp="open smb://shared-fs2.office.rapidimages.se/temporary"
+alias mountclients="open smb://shared-fs2.office.rapidimages.se/clients"
+alias mountsoftware="open smb://shared-fs2.office.rapidimages.se/software"
+alias mountrenderfarm_scripts="open smb://shared-fs2.office.rapidimages.se/renderfarm_scripts"
+alias mountsharedassets="open smb://shared-fs2.office.rapidimages.se/inter-IKEA_shared_assets"
+
+alias fs2="mountDev && mountTemp && mountclients && mountrenderfarm_scripts && mountsharedassets"
+
+
+# --------------------------------------------------------------------------
+echo "Rapid aliases loaded"

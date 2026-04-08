@@ -1,0 +1,131 @@
+
+alias wealias='cat  $HOME/DEV/notes/setup/.weapp_aliases'
+
+# boxtime 
+#
+
+BOX_STAGING_ACCOUNT_ID=650485669960
+BOX_PRODUCTION_ACCOUNT_ID=471112653085
+
+# OrganizationAccountAccessRole
+IAM_USER=johan@weapp.se
+alias awsCreds="cat ~/.aws/credentials && cat ~/.aws/config"
+
+
+
+
+# directories
+# --------------------------------------------
+
+alias cd-box='cd-dev && cd boxflow'
+alias cd-box-api='cd-dev && cd boxflow/boxtime-api-server'
+alias cd-box-dash='cd-dev && cd boxflow/boxtime-dashboard'
+alias cd-box-infra='cd-dev && cd boxflow/boxtime-infrastructure'
+
+alias cd-sejfa='cd-dev && cd lfant'
+alias cd-sejfa-api='cd-dev && cd lfant/sejfa-api'
+alias cd-sejfa-web='cd-dev && cd lfant/sejfa-web'
+
+
+# BOXTIME AWS
+# --------------------------------------------
+alias ls-cert='aws acm list-certificates --region eu-north-1 --profile boxprod'
+alias ls-rec='listrec'
+alias ls-zones='aws route53 list-hosted-zones --query "HostedZones[*].[Id,Name]" --output table'
+alias ls-users='aws cognito-idp list-users \
+  --user-pool-id eu-north-1_JoUGsySO \
+  --query "Users[?UserCreateDate>=\`$(date -u -v-7d +%Y-%m-%dT%H:%M:%SZ)\`].[Username, UserCreateDate, Attributes[?Name==\`email\`].Value | [0]]" \
+  --output table \
+  --profile boxprod'
+
+
+alias ls-env='f() { \
+    PROFILE_ARG=""; \
+    if [ -n "$2" ]; then PROFILE_ARG="--profile $2"; fi; \
+    TASK_DEF=$(aws ecs describe-services \
+        --cluster BoxtimeCluster \
+        --services "$1" \
+        --region eu-north-1 $PROFILE_ARG \
+        --query "services[0].taskDefinition" \
+        --output text); \
+    aws ecs describe-task-definition \
+        --task-definition "$TASK_DEF" \
+        --region eu-north-1 $PROFILE_ARG \
+        --query "taskDefinition.containerDefinitions[0].environment" \
+        --output table; \
+}; f'
+
+
+alias dockerlogin='aws ecr get-login-password --region eu-north-1 \
+  | docker login --username AWS --password-stdin \
+  $(aws sts get-caller-identity --query Account --output text).dkr.ecr.eu-north-1.amazonaws.com'
+
+alias dockerloginprod='aws ecr get-login-password --region eu-north-1 --profile boxprod \
+  | docker login --username AWS --password-stdin \
+  $(aws sts get-caller-identity --query Account --output text --profile boxprod).dkr.ecr.eu-north-1.amazonaws.com'
+
+alias ecs-api-env='aws ecs describe-task-definition \
+  --task-definition $(aws ecs describe-services \
+    --cluster BoxtimeCluster \
+    --services ApiServer \
+    --query "services[0].taskDefinition" \
+    --output text) \
+  --query "taskDefinition.containerDefinitions[0].environment" \
+  --output json'
+
+
+  alias ecs-api-env-prod='aws ecs describe-task-definition \
+  --task-definition $(aws ecs describe-services \
+    --cluster Boxtime-ProductionCluster \
+    --services ApiServer \
+    --query "services[0].taskDefinition" \
+    --output text \
+    --profile boxprod) \
+  --query "taskDefinition.containerDefinitions[0].environment" \
+  --output json \
+  --profile boxprod'
+ 
+
+# AZ devops
+# --------------------------------------------
+
+# List all tenants (organizations you have access to)
+alias devops-tenants='az account tenant list --output table'
+
+alias devops-tenant='az account show --output table'
+
+alias devops-lfant='az account set --tenant 55e9a99d-4c26-4aa5-97c6-91d10780a3eb && az devops configure --defaults organization=https://dev.azure.com/lfantdevelophub project=sejva && echo "🔄 Switched to tenant: lfant-devops (sejva project)"'
+
+alias devops-develophub='az account set --tenant b976327a-312b-4e2c-855d-7074fd61ca65 && az devops configure --defaults organization=https://dev.azure.com/DevelopHub project=someproject && echo "🔄 Switched to tenant: DevelopHub"'
+
+alias devops-sejfa='az account set --tenant e039b055-ea91-4667-8d63-e1acbb1fb391 && az devops configure --defaults organization=https://dev.azure.com/Sejfa project=sejfa-api && echo "🔄 Switched to tenant: Sejfa AB"'
+
+alias devops-pr-my='az repos pr list --creator "$(az ad signed-in-user show --query userPrincipalName -o tsv)" --status active --output table'
+# List all pull requests (active)
+alias devops-pr-list='az repos pr list --status active --output table'
+# Get PR diff / changed files (usage: devops-pr-diff <PR_ID>)
+alias devops-pr-diff='function _devops_pr_diff(){ az repos pr files list --id "$1" --output table; }; _devops_pr_diff'
+# Get PR comments (usage: devops-pr-comments <PR_ID>)
+alias devops-pr-comments='function _devops_pr_comments(){ az repos pr reviewer list --id "$1" --output table; }; _devops_pr_comments'
+# Get PR details (usage: devops-pr-show <PR_ID>)
+alias devops-pr-show='function _devops_pr_show(){ az repos pr show --id "$1" --output table; }; _devops_pr_show'
+# List repositories
+alias devops-repos='az repos list --output table'
+# List pipelines
+alias devops-pipelines='az pipelines list --output table'
+# Run a pipeline by name (usage: devops-pipeline-run "<PIPELINE_NAME>")
+alias devops-pipeline-run='function _devops_pipeline_run(){ az pipelines run --name "$1" --output table; }; _devops_pipeline_run'
+alias devops-config='az devops configure --list --output table'
+alias devops-me='az ad signed-in-user show --output table'
+
+
+
+# --------------------------------------------
+
+
+
+
+echo "Weapp aliases loaded"
+
+
+

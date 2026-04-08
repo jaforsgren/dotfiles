@@ -1,0 +1,21 @@
+<type>: <title>
+# No more than 50 chars ##### 50 chars is here: #
+
+# Types of commits:
+# 🔧 fix:
+# 🐛 fix:
+# ✨ Feat:
+# 🚧 wip:
+# 🚑 hotfix:
+# 🔨 refactor
+# 🧪 test:
+# 🐎 perf:
+# 📚 docs:
+# 🥞 chore:
+# Footer and bodystuff
+# 💥 BREAKING CHANGE:
+
+
+# Leave a blank line between title and body
+<body>
+# Wrap at 72 chars ################################ 72 chars is here: #
