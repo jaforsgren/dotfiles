@@ -88,9 +88,7 @@ alias dcd="docker compose down"
 alias cd-docker-conf="cd ~/Library/Containers/com.docker.docker/"
 alias cd-docekr-conf-user="cd ~/.docker"
 
-alias exec=execfunc
-alias dc="docker-compose"
-alias logs="cd-upp && docker-compose logs -f"
+alias dc="docker compose"
 
 alias k9sconf="nvim $HOME/Library/Application Support/k9s/config.yml"
 
@@ -131,7 +129,6 @@ alias teamsclear="rm -rf ~/Library/Containers/com.microsoft.teams2 && rm -rf ~/L
 
 alias pyclear="find . \( -name '__pycache__' -or -name '*.pyc' \) -delete"
 
-alias openwebui="docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui"
 
 alias codi="code-insiders"
 

@@ -61,7 +61,7 @@ listrec() {
 
 # --------------------------------------------------------------------------
 # Source other scripts
-source /Users/johanforsgren/tt.sh
+[ -f "$HOME/tt.sh" ] && source "$HOME/tt.sh"
 
 # GitHub Copilot alias
 
@@ -71,11 +71,6 @@ source /Users/johanforsgren/tt.sh
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"                                       # Loads nvm
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" # Loads nvm bash_completion
-
-# Add current Node version to PATH safely
-if command -v nvm >/dev/null 2>&1; then
-  export PATH="$NVM_DIR/versions/node/$(nvm version)/bin:$PATH"
-fi
 
 # ----------------------------------------
 # Homebrew and local bins

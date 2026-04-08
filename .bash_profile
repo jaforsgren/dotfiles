@@ -1,4 +1,4 @@
-export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/local/bin:/usr/local/bin:/Users/johanforsgren/.nvm/versions/node//bin:/usr/local/bin:/Users/johanforsgren/.nvm/versions/node//bin:/usr/local/bin:/Users/johanforsgren/.nvm/versions/node//bin:/Users/johanforsgren/Library/pnpm:/usr/local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin
+export PATH=/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$HOME/Library/pnpm:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
 # include .bashrc if it exists
 if [ -f "$HOME/.bashrc" ]; then
@@ -20,6 +20,4 @@ export PATH="$PATH:/Users/johanforsgren/.dotnet/tools"
 
 # add Pulumi to the PATH
 export PATH=$PATH:/Users/johanforsgren/.pulumi/bin
-export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/opt/dotnet@8/bin:$PATH"
 export PATH="/opt/homebrew/opt/dotnet@8/bin:$PATH"
