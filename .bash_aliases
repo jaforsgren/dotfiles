@@ -63,20 +63,29 @@ alias rebasem="git pull --rebase origin main"
 alias rbm="rebasem"
 
 alias gsl="git stash list"
+alias github='open "$(git remote get-url origin 2>/dev/null | sed -E '\''s/git@github.com:(.*)\.git/https:\/\/github.com\/\1/; s/\.git$//'\'' )"'
+alias ghb=github
 
 # rebase interactive against all comits in branch (agains develop)
 alias rbdi='git rebase -i $(git merge-base HEAD $(git for-each-ref --format="%(upstream:short)" "$(git symbolic-ref -q HEAD)" || echo origin/develop))'
 
 # alias cm='git commit -m'
 
-alias pr='gh pr view && gh api repos/$(gh repo view --json owner,name --jq ".owner.login + \"/\" + .name")/pulls/$(gh pr view --json number --jq .number)/comments --paginate --jq ".[] | {path: .path, line: .line, author: .user.login, body: .body}"'
+alias ghpr='gh pr view && gh api repos/$(gh repo view --json owner,name --jq ".owner.login + \"/\" + .name")/pulls/$(gh pr view --json number --jq .number)/comments --paginate --jq ".[] | {path: .path, line: .line, author: .user.login, body: .body}"'
+alias pr='git remote get-url origin | \
+sed -E "s#git@ssh.dev.azure.com:v3/([^/]+)/([^/]+)/(.+)#https://dev.azure.com/\1/\2/_git/\3/pullrequests?_a=mine#" | \
+xargs open'
 
 # cd aliases
 # --------------------------------------------
 alias cd-dev='cd ~/DEV/'
-alias cd-notes='cd $HOME/DEV/notes'
+alias cd-notes='cd $HOME/DEV/weapp-notes'
 alias notes="cd-notes && glow"
 alias ..="cd .."
+alias cd-pers="cd-dev && cd PERSONAL"
+alias cd-p=cd-pers
+alias cd-dot="cd-dev && cd dotfiles"
+alias cd-d=cd-dot
 
 # docker / k8s stuff
 # --------------------------------------------
@@ -128,7 +137,6 @@ alias startsshagent="eval '$(ssh-agent -s)'" # start sshagent i bg
 alias teamsclear="rm -rf ~/Library/Containers/com.microsoft.teams2 && rm -rf ~/Library/Group Containers/UBF8T346G9.com.microsoft.teams && rm -rf ~/Library/Containers/com.microsoft.teams2.notificationcenter && rm -rf ~/Library/Application\ Support/Microsoft/Teams && rm -rf ~/Library/Application\ Support/Teams"
 
 alias pyclear="find . \( -name '__pycache__' -or -name '*.pyc' \) -delete"
-
 
 alias codi="code-insiders"
 
