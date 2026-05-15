@@ -132,6 +132,9 @@ alias getstack="cf describe-stacks --stack-name"
 
 # Misc weird stuff
 # --------------------------------------------
+
+alias godot='/Applications/Godot_mono.app/Contents/MacOS/Godot'
+
 alias startsshagent="eval '$(ssh-agent -s)'" # start sshagent i bg
 
 alias teamsclear="rm -rf ~/Library/Containers/com.microsoft.teams2 && rm -rf ~/Library/Group Containers/UBF8T346G9.com.microsoft.teams && rm -rf ~/Library/Containers/com.microsoft.teams2.notificationcenter && rm -rf ~/Library/Application\ Support/Microsoft/Teams && rm -rf ~/Library/Application\ Support/Teams"
