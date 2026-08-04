@@ -27,11 +27,20 @@ alias cd-sejfa-api='cd-dev && cd lfant/sejfa-api'
 alias cd-sejfa-web='cd-dev && cd lfant/sejfa-web'
 alias cd-lfant='cd-dev && cd lfant'
 alias cd-sapi='cd-lfant && cd sejfa/sapi'
-alias cd-common='cd-lfant cd common'
+alias cd-common='cd-lfant && cd common'
 alias cd-protos='cd-common && cd develophub-protos'
 alias cd-bts='cd-lfant && cd big-tusks-services'
 alias cd-pers='cd-bts && cd persona'
 alias cd-cd='cd-bts && cd claim-documentation'
+
+
+alias cdlfant='cd-dev && cd lfant'
+alias cdsapi='cd-lfant && cd sejfa/sapi'
+alias cdcommon='cd-lfant && cd common'
+alias cdprotos='cd-common && cd develophub-protos'
+alias cdbts='cd-lfant && cd big-tusks-services'
+alias cdpers='cd-bts && cd persona'
+alias cdcd='cd-bts && cd claim-documentation'
 
 
 # BOXTIME AWS
@@ -129,8 +138,15 @@ alias devops-me='az ad signed-in-user show --output table'
 
 # --------------------------------------------
 
+alias run-grpc="cd-lfant && ./bigtusk-grpc.sh"
+alias rgprc="run-grpc"
+alias killgrpc="tmux kill-session -t bigtuskgrpc"
+alias run-workers="cd-lfant && ./bigtusk-workers.sh"
+alias rwork="run-workers"
+alias rworkers="run-workers"
+alias killworkers="tmux kill-session -t bigtusksworkers"
 
-
+# --------------------------------------------
 
 echo "Weapp aliases loaded"
 

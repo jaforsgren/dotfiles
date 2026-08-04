@@ -64,7 +64,21 @@ listrec() {
 # Source other scripts
 [ -f "$HOME/tt.sh" ] && source "$HOME/tt.sh"
 
-# GitHub Copilot alias
+# ----------------------------------------
+# Bash history
+# ----------------------------------------
+if [[ $- == *i* ]] && [[ -f "$HOME/.local/share/blesh/ble.sh" ]]; then
+  source "$HOME/.local/share/blesh/ble.sh"
+fi
+
+HISTFILE="$HOME/.bash_history"
+HISTSIZE=100000
+HISTFILESIZE=200000
+HISTCONTROL=ignoreboth:erasedups
+
+shopt -s histappend
+
+PROMPT_COMMAND="history -a; history -n${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
 # ----------------------------------------
 # NVM setup
@@ -80,7 +94,16 @@ export NVM_DIR="$HOME/.nvm"
 # export PATH=$DOTNET_ROOT:$PATH
 export PATH="/opt/homebrew/bin:/usr/local/bin:$HOME/.local/bin:$PATH"
 
+export DOTNET_ROOT=/usr/local/share/dotnet
+export PATH=$DOTNET_ROOT:$PATH
+
 # --------------------------------------------------------------------------
 echo "============================="
 echo "~/.bashrc loaded!!!"
 echo "============================="
+
+# kimi-code
+export PATH="/Users/johanforsgren/.kimi-code/bin:$PATH"
+
+# opencode
+export PATH=/Users/johanforsgren/.opencode/bin:$PATH

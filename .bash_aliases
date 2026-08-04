@@ -1,3 +1,5 @@
+ALIASES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+
 # LLM prompts
 # ---------------------------------------------
 alias llm-analyse=analyseRepository
@@ -13,7 +15,7 @@ alias bashrc="cd-notes &&  nvim ./setup/.bashrc ./setup/.bash_aliases"
 alias nvimconf="cd ~/.config/nvim && nvim"
 alias cd-nvim="cd ~/.config/nvim/"
 alias cbashrc="cat ~/.bashrc"
-alias reload="source ~/.bashrc"
+alias reload="source ~/.bashrc && tmux source-file ~/.tmux.conf"
 alias openwebui="docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main"
 
 # some more ls aliases
@@ -130,6 +132,43 @@ alias cf='aws cloudformation'
 alias awsgetDB="aws rds describe-db-instances --query \"DBInstances[*].{DBInstance:DBInstanceIdentifier,Endpoint:Endpoint.Address,Port:Endpoint.Port}\" --output table"
 alias getstack="cf describe-stacks --stack-name"
 
+# tmux
+# --------------------------------------------
+
+alias tls="tmux list-sessions -F '#{session_id}: #{session_name}'"
+alias tn="tmux new -s"
+
+ta() {
+  if [ $# -eq 0 ]; then
+    tmux attach
+  elif [[ "$1" =~ ^[0-9]+$ ]]; then
+    tmux attach -t "\$$1"
+  else
+    tmux attach -t "$1"
+  fi
+}
+
+# Attach by session ID or name
+taid() {
+  tmux attach -t "$1"
+}
+
+# Switch to a session from inside tmux
+ts() {
+  tmux switch-client -t "$1"
+}
+
+# Kill a session by ID or name
+tkill() {
+  tmux kill-session -t "$1"
+}
+
+alias t-save="${ALIASES_DIR}/save-tmux-sessions.sh"
+alias tsave="t-save"
+alias t-restore="${ALIASES_DIR}/tmux-sessions/start-all.sh"
+alias tres="t-restore"
+alias trestore="tres"
+
 # Misc weird stuff
 # --------------------------------------------
 
@@ -147,10 +186,13 @@ alias cl='claude'
 
 alias lgtm='/Users/johanforsgren/DEV/PERSONAL/LGTMFaster/lgtmfaster'
 alias postoffice='/Users/johanforsgren/DEV/PERSONAL/postOffice/postOffice'
+alias po='postoffice'
 alias cmdban='/Users/johanforsgren/DEV/PERSONAL/cmdban/cmdban'
 alias kanban='cmdban'
 alias ban='cmdban'
 alias dotnet9="/opt/homebrew/opt/dotnet@9/libexec/dotnet"
+alias dtest="dotnet build && dotnet test --no-build"
+alias drun="dotnet run --launch-profile http"
 
 source $HOME/DEV/dotfiles/.weapp_aliases
 

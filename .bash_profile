@@ -19,6 +19,9 @@ echo "Bash profile loaded"
 # Add .NET Core SDK tools
 export PATH="$PATH:/Users/johanforsgren/.dotnet/tools"
 
+export DOTNET_ROOT=/opt/homebrew/opt/dotnet/libexec
+export DOTNET_ROOT_X64=/opt/homebrew/opt/dotnet/libexec
+
 # add Pulumi to the PATH
 export PATH=$PATH:/Users/johanforsgren/.pulumi/bin
-export PATH="/opt/homebrew/opt/dotnet@8/bin:$PATH"
+# export PATH="/opt/homebrew/opt/dotnet@8/bin:$PATH"
