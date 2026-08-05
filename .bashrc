@@ -1,6 +1,7 @@
 # Source aliases
 # --------------------------------------------------------------------------
 #
+export LANG=en_US.UTF-8
 
 set -o vi # VIM keymapping in cmdline
 
@@ -19,6 +20,12 @@ fi
 # fi
 
 export NVIM_DIR=~/.config/nvim
+
+# Load ble.sh, but do not attach to the terminal yet
+# --------------------------------------------------------------------------
+if [[ $- == *i* ]] && [[ -f "$HOME/.local/share/blesh/ble.sh" ]]; then
+  source "$HOME/.local/share/blesh/ble.sh" --attach=none
+fi
 
 # GIT functions
 # --------------------------------------------------------------------------
@@ -45,6 +52,23 @@ gsp() {
   git stash pop "stash@{$1}"
 }
 
+_commit() {
+  local type="$1"
+  local msg
+
+  read -erp "$type: " msg
+  [[ -z "$msg" ]] && return
+
+  git commit -m "$type: $msg"
+}
+
+cmf() { _commit "Feat"; }
+cmfx() { _commit "Fix"; }
+cmc() { _commit "Chore"; }
+cmd() { _commit "Docs"; }
+cmr() { _commit "Refactor"; }
+cmt() { _commit "Test"; }
+
 # MISC
 # --------------------------------------------------------------------------
 
@@ -67,10 +91,6 @@ listrec() {
 # ----------------------------------------
 # Bash history
 # ----------------------------------------
-if [[ $- == *i* ]] && [[ -f "$HOME/.local/share/blesh/ble.sh" ]]; then
-  source "$HOME/.local/share/blesh/ble.sh"
-fi
-
 HISTFILE="$HOME/.bash_history"
 HISTSIZE=100000
 HISTFILESIZE=200000
@@ -98,12 +118,16 @@ export DOTNET_ROOT=/usr/local/share/dotnet
 export PATH=$DOTNET_ROOT:$PATH
 
 # --------------------------------------------------------------------------
-echo "============================="
-echo "~/.bashrc loaded!!!"
-echo "============================="
 
 # kimi-code
 export PATH="/Users/johanforsgren/.kimi-code/bin:$PATH"
 
 # opencode
 export PATH=/Users/johanforsgren/.opencode/bin:$PATH
+
+echo "============================="
+echo "~/.bashrc loaded!!!"
+echo "============================="
+
+# attach ble
+[[ ${BLE_VERSION-} ]] && ble-attach
