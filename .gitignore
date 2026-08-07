@@ -5,3 +5,5 @@ CLAUDE.md
 _tasks/
 _tmp/
 _docs/
+
+**/.claude/settings.local.json

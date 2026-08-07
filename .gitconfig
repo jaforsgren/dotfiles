@@ -3,8 +3,16 @@
 [core]
 	editor = code --wait
 	autocrlf = input
-	pager = cat
+	pager = nvim +Man!
 	excludesFile = ~/.gitignore
+[color]
+	pager = false
+[pager]
+	diff = nvim -c \"set ft=diff\" -
+	show = nvim -c \"set ft=diff\" -
+	stash = cat
+	log = cat
+	branch = cat
 [alias]
 	co = checkout
 	cob = checkout -b
