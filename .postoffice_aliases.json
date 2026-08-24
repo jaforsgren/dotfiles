@@ -1,0 +1,22 @@
+{
+  "aliases": {
+    "emulator-bigtusks-staging-merge": {
+      "command": "merge",
+      "args": [
+        "examples/servicebus-emulator.env.json",
+        "../../lfant/Bigtusks staging.postman_environment.json",
+        "--forceMerge"
+      ]
+    },
+    "sapi-testenv-merge": {
+      "command": "merge",
+      "args": [
+        "/Users/johanforsgren/DEV/lfant/SAPI.postman_collection.json",
+        "examples/test-environment.json",
+        "--forceMerge",
+        "-o",
+        "examples/servicebus-events.js"
+      ]
+    }
+  }
+}

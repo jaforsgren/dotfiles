@@ -1,0 +1,10 @@
+{
+  "collection_paths": [
+    "/Users/johanforsgren/DEV/PERSONAL/postOffice/examples/servicebus-events.json",
+    "/Users/johanforsgren/DEV/lfant/SAPI.postman_collection.json"
+  ],
+  "environment_paths": [
+    "/Users/johanforsgren/DEV/lfant/Bigtusks.postman_environment.json",
+    "/Users/johanforsgren/DEV/PERSONAL/postOffice/examples/servicebus-emulator.env.json"
+  ]
+}
