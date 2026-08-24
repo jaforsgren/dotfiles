@@ -9,6 +9,40 @@ export ME=$(whoami)
 
 export DEVDIR=$HOME/DEV
 
+loadenv() {
+  local envfile="${1:-$DEVDIR/dotfiles/.env}"
+
+  if [ ! -f "$envfile" ]; then
+    echo "loadenv: no env file at $envfile"
+    return 1
+  fi
+
+  local exported_vars=()
+  local line key value
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+
+    key="${line%%=*}"
+    value="${line#*=}"
+    key="$(echo "$key" | xargs)"
+    [[ -z "$key" ]] && continue
+
+    export "$key=$value"
+    exported_vars+=("$key")
+  done < "$envfile"
+
+  echo "----- exported env vars  -----"
+  printf '%s\n' "${exported_vars[@]}"
+  echo "-----------------------------"
+}
+
+loadenv
+
+echo "============================="
+echo "~/.bashrc loaded!!!"
+echo "============================="
+
 if [ -f $DEVDIR/dotfiles/.bash_aliases ]; then
   echo "loading .bash_aliases"
   . $DEVDIR/dotfiles/.bash_aliases
@@ -124,10 +158,6 @@ export PATH="/Users/johanforsgren/.kimi-code/bin:$PATH"
 
 # opencode
 export PATH=/Users/johanforsgren/.opencode/bin:$PATH
-
-echo "============================="
-echo "~/.bashrc loaded!!!"
-echo "============================="
 
 # attach ble
 [[ ${BLE_VERSION-} ]] && ble-attach

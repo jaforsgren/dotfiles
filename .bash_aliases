@@ -82,10 +82,11 @@ xargs open'
 # --------------------------------------------
 alias cd-dev='cd ~/DEV/'
 alias cd-notes='cd $HOME/DEV/weapp-notes'
+alias cd-kanban='cd-notes && cd kanban'
 alias notes="cd-notes && glow"
 alias ..="cd .."
-alias cd-pers="cd-dev && cd PERSONAL"
-alias cd-p=cd-pers
+alias cd-p="cd-dev && cd PERSONAL"
+alias cd-n="cd-dev && cd personal-notes"
 alias cd-dot="cd-dev && cd dotfiles"
 alias cd-d=cd-dot
 
