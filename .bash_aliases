@@ -1,11 +1,15 @@
 ALIASES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-# LLM prompts
-# ---------------------------------------------
-alias llm-analyse=analyseRepository
-alias llm-review=reviewGitDiff
-alias llm-issues=createRepositoryIssues
-alias llm-tests=listMissingRepositoryTest
+# Search loaded aliases by name/definition. Kept separate from the `alias`
+# builtin itself: ble.sh calls `alias` on a hot path (syntax highlighting),
+# and overriding it as a function there caused a severe interactive slowdown.
+als() {
+  if [ $# -eq 0 ]; then
+    builtin alias
+  else
+    builtin alias | grep -i -- "$@"
+  fi
+}
 
 # Misc setup stuff
 # ---------------------------------------------
@@ -175,7 +179,7 @@ alias trestore="tres"
 
 alias godot='/Applications/Godot_mono.app/Contents/MacOS/Godot'
 
-alias startsshagent="eval '$(ssh-agent -s)'" # start sshagent i bg
+alias startsshagent='eval "$(ssh-agent -s)"' # start sshagent i bg
 
 alias teamsclear="rm -rf ~/Library/Containers/com.microsoft.teams2 && rm -rf ~/Library/Group Containers/UBF8T346G9.com.microsoft.teams && rm -rf ~/Library/Containers/com.microsoft.teams2.notificationcenter && rm -rf ~/Library/Application\ Support/Microsoft/Teams && rm -rf ~/Library/Application\ Support/Teams"
 
@@ -184,6 +188,7 @@ alias pyclear="find . \( -name '__pycache__' -or -name '*.pyc' \) -delete"
 alias codi="code-insiders"
 
 alias cl='claude'
+alias oc='opencode'
 
 alias lgtm='/Users/johanforsgren/DEV/PERSONAL/LGTMFaster/lgtmfaster'
 alias postoffice='/Users/johanforsgren/DEV/PERSONAL/postOffice/postOffice'
