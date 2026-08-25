@@ -22,7 +22,9 @@ alias cd-box-api='cd-dev && cd boxflow/boxtime-api-server'
 alias cd-box-dash='cd-dev && cd boxflow/boxtime-dashboard'
 alias cd-box-infra='cd-dev && cd boxflow/boxtime-infrastructure'
 
-alias cd-sejfa='cd-dev && cd lfant'
+alias cd-sejfa='cd-dev && cd lfant && cd sejfa/Sejfa.Internal'
+alias cd-s='cd-sejfa'
+alias cds='cd-sejfa'
 alias cd-sejfa-api='cd-dev && cd lfant/sejfa-api'
 alias cd-sejfa-web='cd-dev && cd lfant/sejfa-web'
 alias cd-lfant='cd-dev && cd lfant'
@@ -41,6 +43,7 @@ alias cdprotos='cd-common && cd develophub-protos'
 alias cdbts='cd-lfant && cd big-tusks-services'
 alias cdpers='cd-bts && cd persona'
 alias cdcd='cd-bts && cd claim-documentation'
+alias cd-sejfa
 
 
 # BOXTIME AWS
