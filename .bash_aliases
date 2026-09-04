@@ -51,7 +51,7 @@ alias sonnet='aider --model openai/claude-3.7-sonnet'
 alias gut='git'
 alias got='git'
 alias lg=log_git
-alias gd="git diff -- ':!*json' ':!yarn.lock'"
+alias gd="git diff -w -- ':!*json' ':!yarn.lock'"
 alias st="git status"
 alias diff=difffunc
 alias difflog="git diff -G '.*console.log.*'"
@@ -190,6 +190,16 @@ alias codi="code-insiders"
 alias cl='claude'
 alias oc='opencode'
 
+# OpenCode OCR aliases
+# Automatically quote the prompt for 'oc run --auto' and 'oc run --auto --continue'
+ocr() {
+  oc run --auto "$*"
+}
+
+ocrc() {
+  oc run --auto --continue "$*"
+}
+
 alias lgtm='/Users/johanforsgren/DEV/PERSONAL/LGTMFaster/lgtmfaster'
 alias postoffice='/Users/johanforsgren/DEV/PERSONAL/postOffice/postOffice'
 alias po='postoffice'
@@ -199,6 +209,9 @@ alias ban='cmdban'
 alias dotnet9="/opt/homebrew/opt/dotnet@9/libexec/dotnet"
 alias dtest="dotnet build && dotnet test --no-build"
 alias drun="dotnet run --launch-profile http"
+
+alias rider='open -a "Rider" .'
+alias rec='/Users/johanforsgren/DEV/dotfiles/scripts/rec.sh'
 
 source $HOME/DEV/dotfiles/.weapp_aliases
 
