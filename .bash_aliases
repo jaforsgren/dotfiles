@@ -20,6 +20,8 @@ alias nvimconf="cd ~/.config/nvim && nvim"
 alias cd-nvim="cd ~/.config/nvim/"
 alias cbashrc="cat ~/.bashrc"
 alias reload="source ~/.bashrc && tmux source-file ~/.tmux.conf"
+alias thelp="glow $DEVDIR/dotfiles/docs/tmux.md"
+alias nhelp="glow $DEVDIR/dotfiles/docs/nvim.md"
 alias openwebui="docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main"
 
 # some more ls aliases
