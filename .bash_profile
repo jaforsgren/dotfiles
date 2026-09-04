@@ -22,3 +22,12 @@ export PATH="$PATH:/Users/johanforsgren/.dotnet/tools"
 # add Pulumi to the PATH
 export PATH=$PATH:/Users/johanforsgren/.pulumi/bin
 # export PATH="/opt/homebrew/opt/dotnet@8/bin:$PATH"
+
+# Prefer the dotnet-install SDK (has 8/9/10 runtimes) over Homebrew's dotnet
+# (which only ships the latest major's runtime) - avoids "FrameworkNotFound"
+# when running apps targeting older TFMs.
+
+export PATH="/opt/homebrew/Cellar:$PATH"
+
+export DOTNET_ROOT=/usr/local/share/dotnet
+export PATH="/usr/local/share/dotnet:$PATH"

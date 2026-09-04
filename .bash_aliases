@@ -200,6 +200,14 @@ ocrc() {
   oc run --auto --continue "$*"
 }
 
+# Open a .thmp.md file in nvim, then pipe content to oc prompt --auto on save/exit
+ocv() {
+  local file="${1:-$(date +%Y%m%d_%H%M%S).thmp.md}"
+  nvim "$file"
+  cat "$file" | oc prompt --auto
+  rm "$file"
+}
+
 alias lgtm='/Users/johanforsgren/DEV/PERSONAL/LGTMFaster/lgtmfaster'
 alias postoffice='/Users/johanforsgren/DEV/PERSONAL/postOffice/postOffice'
 alias po='postoffice'
