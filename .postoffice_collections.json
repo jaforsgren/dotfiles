@@ -1,10 +1,7 @@
 {
   "collection_paths": [
-    "/Users/johanforsgren/DEV/PERSONAL/postOffice/examples/servicebus-events.json",
-    "/Users/johanforsgren/DEV/lfant/SAPI.postman_collection.json"
+    "/var/folders/lx/l5cxdg094tz58qp43wbfmc5h0000gn/T/TestHandleToggleActiveCollectionKey1422803914/001/collection.json",
+    "/var/folders/lx/l5cxdg094tz58qp43wbfmc5h0000gn/T/TestHandleToggleActiveCollectionKey1422803914/002/collection.json"
   ],
-  "environment_paths": [
-    "/Users/johanforsgren/DEV/lfant/Bigtusks.postman_environment.json",
-    "/Users/johanforsgren/DEV/PERSONAL/postOffice/examples/servicebus-emulator.env.json"
-  ]
+  "environment_paths": []
 }
