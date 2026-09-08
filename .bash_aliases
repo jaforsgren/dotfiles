@@ -11,6 +11,8 @@ als() {
   fi
 }
 
+alias yp='pwd | pbcopy'
+
 # Misc setup stuff
 # ---------------------------------------------
 alias pipenv='python3.6 -m pipenv'
