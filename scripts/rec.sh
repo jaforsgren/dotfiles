@@ -55,7 +55,7 @@ Include:
 
 # Summary
 
-A concise summary of the meeting.
+A concise summary of the meeting. short sentances. 
 
 # Key points
 
@@ -78,6 +78,10 @@ Anything unresolved or requiring follow-up.
 The meeting may be in a language other than English.
 Keep the transcript in its original language.
 Write the meeting notes in English.
+
+Under each '#' header, organise stuff after subbject under ### <subject>
+
+Between each '#' header , add a '---' separator
 
 TRANSCRIPT:
 
