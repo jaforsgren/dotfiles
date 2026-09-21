@@ -34,7 +34,7 @@
 	rebase = true
 [user]
 	name = Johan Forsgren
-	email = jforsgren@rapidimages.se
+	email = johan@weapp.se
 [push]
 	default = simple
 	followTags = true

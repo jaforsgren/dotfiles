@@ -11,6 +11,12 @@ als() {
   fi
 }
 
+# Copy last command + its output to clipboard (macOS)
+cprev() {
+  cmd=$(fc -ln -1)
+  printf '%s\n%s\n' "$cmd" "$(eval "$cmd" 2>&1)" | pbcopy
+}
+
 alias yp='pwd | pbcopy'
 
 # Misc setup stuff
@@ -144,7 +150,31 @@ alias getstack="cf describe-stacks --stack-name"
 # tmux
 # --------------------------------------------
 
-alias tls="tmux list-sessions -F '#{session_id}: #{session_name}'"
+unalias tls 2>/dev/null
+
+tls() {
+  local current
+  current="$(tmux list-sessions -F '#{session_name}' 2>/dev/null)"
+
+  tmux list-sessions -F '#{session_id}: #{session_name}' 2>/dev/null
+
+  echo "--- restorable (not running) ---"
+
+  local script assignment
+  for script in "${ALIASES_DIR}"/tmux-sessions/start-*.sh; do
+    [[ -e "$script" ]] || continue
+    [[ "$(basename -- "$script")" == "start-all.sh" ]] && continue
+
+    local SESSION=""
+    assignment="$(grep -m1 '^SESSION=' "$script")"
+    eval "$assignment"
+
+    if [[ -n "$SESSION" ]] && ! grep -qxF "$SESSION" <<<"$current"; then
+      echo "$SESSION"
+    fi
+  done
+}
+
 alias tn="tmux new -s"
 
 ta() {
@@ -153,7 +183,14 @@ ta() {
   elif [[ "$1" =~ ^[0-9]+$ ]]; then
     tmux attach -t "\$$1"
   else
-    tmux attach -t "$1"
+    local session="$1"
+    local start_script="${ALIASES_DIR}/tmux-sessions/start-${session}.sh"
+
+    if ! tmux has-session -t "=${session}" 2>/dev/null && [ -x "$start_script" ]; then
+      "$start_script"
+    fi
+
+    tmux attach -t "$session"
   fi
 }
 
@@ -203,6 +240,8 @@ ocr() {
 ocrc() {
   oc run --auto --continue "$*"
 }
+
+alias occ="ocrc"
 
 # Open a .thmp.md file in nvim, then pipe content to oc prompt --auto on save/exit
 ocv() {
