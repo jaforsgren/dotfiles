@@ -112,6 +112,12 @@ export VISUAL=nvim
 
 killport() { kill -9 $(lsof -t -i:$1); }
 
+bdm() {
+  local current
+  current=$(git branch --show-current)
+  git branch --merged main | sed 's/^[* ] //' | grep -vx -e "main" -e "$current" | xargs -r git branch -D
+}
+
 calc() { bc -l <<< "$*"; }
 
 # aws
