@@ -64,7 +64,9 @@ alias lg=log_git
 alias gd="git diff -w -- ':!*json' ':!yarn.lock'"
 alias st="git status"
 alias diff=difffunc
-alias difflog="git diff -G '.*console.log.*'"
+alias difflog="git diff -G '.*(console\.log|Log(Trace|Debug|Information|Warning|Error|Critical)).*'"
+alias diffcom="git diff -G '^\s*(//|/\*|\*|\*/)'"
+alias br="git br"
 
 alias rebasei="git rebase -i HEAD~"
 alias gitconsole="git diff --name-only | xargs -I {} grep -Hn 'console.log' {}"
