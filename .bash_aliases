@@ -219,6 +219,12 @@ alias t-restore="${ALIASES_DIR}/tmux-sessions/start-all.sh"
 alias tres="t-restore"
 alias trestore="tres"
 
+# Runs the start script every time (creates the session if missing, or checks
+# each pane and starts dotnet in any that are idle) before attaching.
+alias grpc="${ALIASES_DIR}/tmux-sessions/start-bigtuskgrpc.sh && tmux attach -t bigtuskgrpc"
+alias worker="${ALIASES_DIR}/tmux-sessions/start-bigtuskworkers.sh && tmux attach -t bigtuskworkers"
+alias workers="worker"
+
 # Misc weird stuff
 # --------------------------------------------
 
