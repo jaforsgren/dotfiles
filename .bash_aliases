@@ -30,6 +30,10 @@ alias cbashrc="cat ~/.bashrc"
 alias reload="source ~/.bashrc && tmux source-file ~/.tmux.conf"
 alias thelp="glow $DEVDIR/dotfiles/docs/tmux.md"
 alias nhelp="glow $DEVDIR/dotfiles/docs/nvim.md"
+alias ahelp="glow $DEVDIR/dotfiles/docs/azurite.md"
+
+# Point the az CLI at local Azurite for this shell (see docs/azurite.md)
+alias azconn='export AZURE_STORAGE_CONNECTION_STRING="$AZURITE_CONNECTION_STRING" && echo "az CLI connected to local Azurite (devstoreaccount1)"'
 alias openwebui="docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main"
 
 # some more ls aliases
