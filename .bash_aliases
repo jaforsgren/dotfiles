@@ -17,6 +17,52 @@ cprev() {
   printf '%s\n%s\n' "$cmd" "$(eval "$cmd" 2>&1)" | pbcopy
 }
 
+# yy/yY read the previous command's output straight from tmux scrollback
+# (no re-execution, so it's safe for non-idempotent commands). PS1 starts
+# with "user@host ", so prompt lines are found by that prefix; the previous
+# command/output is whatever sits between the last two prompt lines. We
+# anchor on the last *two* prompt matches rather than "drop the last line"
+# because ble.sh draws a persistent "-- INSERT --" status line below the
+# cursor, so the literal last line of the pane is never the yy/yY invocation.
+_tmux_prev_cmd_and_output() {
+  local capture total last_n prev_n
+  capture=$(tmux capture-pane -p -S -2000)
+  total=$(printf '%s\n' "$capture" | grep -n "^${USER}@")
+  last_n=$(printf '%s\n' "$total" | tail -1 | cut -d: -f1)
+  prev_n=$(printf '%s\n' "$total" | tail -2 | head -1 | cut -d: -f1)
+  if [ -z "$last_n" ] || [ "$prev_n" = "$last_n" ]; then
+    return 1
+  fi
+  _YY_CMD=$(printf '%s\n' "$capture" | sed -n "${prev_n}p" | sed -E 's/.*\$ //')
+  _YY_OUTPUT=$(printf '%s\n' "$capture" | sed -n "$((prev_n + 1)),$((last_n - 1))p")
+}
+
+# Copy just the previous command's output (as printed, not re-run)
+yy() {
+  if [ -z "$TMUX" ]; then
+    echo "yy: requires tmux to read terminal scrollback" >&2
+    return 1
+  fi
+  if ! _tmux_prev_cmd_and_output; then
+    echo "yy: couldn't find a previous command in scrollback" >&2
+    return 1
+  fi
+  printf '%s\n' "$_YY_OUTPUT" | pbcopy
+}
+
+# Copy the previous command + its output (as printed, not re-run)
+yY() {
+  if [ -z "$TMUX" ]; then
+    echo "yY: requires tmux to read terminal scrollback" >&2
+    return 1
+  fi
+  if ! _tmux_prev_cmd_and_output; then
+    echo "yY: couldn't find a previous command in scrollback" >&2
+    return 1
+  fi
+  printf '%s\n%s\n' "$_YY_CMD" "$_YY_OUTPUT" | pbcopy
+}
+
 alias yp='pwd | pbcopy'
 
 # Misc setup stuff

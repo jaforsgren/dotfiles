@@ -8,7 +8,8 @@ Prefix: `ctrl+a` (not default ctrl+b)
 - `tmux ls` - list sessions
 - `ctrl+a d` - detach
 - `ctrl+a $` - rename session
-- `ctrl+a s` - list/switch sessions
+- `ctrl+a s` - list/switch sessions (type the index, then enter, to jump straight to it)
+- `ctrl+a (` / `ctrl+a )` - previous / next session
 
 ## Windows
 - `ctrl+a c` - new window
