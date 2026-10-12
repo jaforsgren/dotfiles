@@ -150,6 +150,35 @@ alias rworkers="run-workers"
 alias killworkers="tmux kill-session -t bigtusksworkers"
 
 # --------------------------------------------
+# local service status check
+# --------------------------------------------
+
+alias status='function _status(){
+  local services=(
+    "whisper / Worker:8391"
+    "whisper / GrpcServer:6091"
+    "payments / Worker:7041"
+    "payments / WebApi:7011"
+    "payments / GrpcServer:7021"
+    "Insurify / Worker:2281"
+    "Insurify / GrpcServer:5083"
+    "persona / GrpcServer:3081"
+    "persona / Worker:3581"
+    "persona / RoaringWebhookApi:3181"
+    "iib-proxy / GrpcServer:1083"
+    "claim-documentation / Worker:8092"
+    "claim-documentation / GrpcServer:8091"
+  );
+  for entry in "${services[@]}"; do
+    local name="${entry%%:*}";
+    local port="${entry##*:}";
+    if nc -z -w1 localhost "$port" 2>/dev/null; then
+      printf "  \033[32m✓ UP  \033[0m %-32s :%s\n" "$name" "$port";
+    else
+      printf "  \033[31m✗ DOWN\033[0m %-32s :%s\n" "$name" "$port";
+    fi;
+  done;
+}; _status'
 
 echo "Weapp aliases loaded"
 
