@@ -65,6 +65,23 @@ yY() {
 
 alias yp='pwd | pbcopy'
 
+# Write in a scratch markdown buffer; on :wq the contents land in the clipboard.
+# Quitting without writing (:q!) leaves the file empty, so the clipboard is untouched.
+# Any args (-i, -a, --resume, ...) are forwarded to clp.
+# The prompt is passed as an argument rather than via stdin, because clp -i reads
+# follow-up turns from stdin and would hit EOF immediately if it were redirected.
+cln() {
+  local scratch_dir scratch_file
+  scratch_dir=$(mktemp -d "${TMPDIR:-/tmp}/yn.XXXXXX") || return 1
+  scratch_file="$scratch_dir/scratch.md"
+  nvim "$scratch_file"
+  if [ -s "$scratch_file" ]; then
+    clp "$@" "$(<"$scratch_file")"
+    echo "cln: copied to clp"
+  fi
+  rm -rf -- "$scratch_dir"
+}
+
 # Misc setup stuff
 # ---------------------------------------------
 alias pipenv='python3.6 -m pipenv'
@@ -289,6 +306,7 @@ alias pyclear="find . \( -name '__pycache__' -or -name '*.pyc' \) -delete"
 alias codi="code-insiders"
 
 alias cl='claude'
+alias cla='claude --allowedTools "mcp__azure-devops__*" -p'
 alias oc='opencode'
 
 # OpenCode OCR aliases
