@@ -5,8 +5,8 @@ A lightweight CLI wrapper around Claude Code, built on the official
 
 Runs a prompt straight through the Agent SDK — no interactive TUI — while
 keeping the parts of Claude Code's interface that matter: compact live
-visibility into what Claude is doing, interactive permission approval, and
-session continuity.
+visibility into what Claude is doing, interactive permission approval, session
+continuity, and (optionally) a live back-and-forth conversation.
 
 (Named `clp` because `cl` is already aliased elsewhere.)
 
@@ -29,14 +29,44 @@ clp --resume "Continue fixing the tests"
 clp --session <session-id> "Continue working"
 clp --verbose "Refactor authentication"
 echo "Fix the lint errors" | clp
+
+# Interactive — a back-and-forth conversation in one process
+clp                       # no prompt + a real terminal: prompts for input
+clp -i "Tell me a joke"   # starts from a prompt, then keeps the conversation going
+clp -i --resume           # continue a prior session interactively
 ```
 
 | Flag | Meaning |
 |---|---|
 | `--resume` | Resume the most recent session recorded for the current directory |
 | `--session <id>` | Resume a specific session by id |
+| `--interactive`, `-i` | Stay open for a back-and-forth conversation instead of exiting after one reply |
 | `--verbose`, `-v` | Show tool inputs/outputs, session/model info, and cost/duration in full |
 | `--help`, `-h` | Print usage |
+
+By default `clp` is single-shot: one prompt in, one reply out, process exits
+(so it's safe to script/pipe). Running it bare at an actual terminal with no
+prompt is the one exception — there's nothing else useful to do with no
+prompt and no stdin to read, so it opens the same interactive mode as `-i`.
+
+## Interactive mode
+
+```
+$ clp -i "Tell me a knock-knock joke"
+Session: 18b4274c-...
+Claude: Knock knock.
+> who's there?
+Claude: Orange.
+> orange who?
+Claude: Orange you glad I didn't say banana?
+> /exit
+```
+
+Each line waits for the previous turn to fully finish before prompting again
+— so you can answer a clarifying question mid-conversation instead of having
+to start a new `clp --resume "..."` invocation for every reply. Type `/exit`
+or `/quit` (or Ctrl+D) to leave; Ctrl+C interrupts the turn in progress
+without closing the session, or exits if nothing is running.
 
 A prompt can be given as trailing arguments or piped via stdin. `clp` always
 runs in the current working directory and loads that project's existing

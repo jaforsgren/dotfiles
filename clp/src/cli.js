@@ -2,6 +2,7 @@ import { query } from '@anthropic-ai/claude-agent-sdk';
 import { parseArgs, ArgsError, USAGE } from './args.js';
 import { formatMessage } from './format.js';
 import { createPermissionHandler } from './permissions.js';
+import { runRepl } from './repl.js';
 import { loadConfig } from './config.js';
 import { loadStore, saveStore, getProject, recordSession, addApproval } from './store.js';
 
@@ -35,17 +36,23 @@ export async function main(argv = process.argv.slice(2)) {
     return 0;
   }
 
+  // Bare `clp` at a real terminal has nothing else useful to do with no
+  // prompt, so it drops into a conversation instead of erroring.
+  const interactive = args.interactive || (!args.prompt && process.stdin.isTTY);
+
   let prompt = args.prompt;
-  if (!prompt) {
-    if (process.stdin.isTTY) {
-      process.stderr.write(`No prompt provided.\n\n${USAGE}`);
+  if (!interactive) {
+    if (!prompt) {
+      if (process.stdin.isTTY) {
+        process.stderr.write(`No prompt provided.\n\n${USAGE}`);
+        return 2;
+      }
+      prompt = await readStdin();
+    }
+    if (!prompt) {
+      process.stderr.write(`Empty prompt.\n\n${USAGE}`);
       return 2;
     }
-    prompt = await readStdin();
-  }
-  if (!prompt) {
-    process.stderr.write(`Empty prompt.\n\n${USAGE}`);
-    return 2;
   }
 
   const config = loadConfig();
@@ -76,6 +83,19 @@ export async function main(argv = process.argv.slice(2)) {
       saveStore(store);
     },
   });
+
+  if (interactive) {
+    return runRepl({
+      initialPrompt: prompt,
+      project,
+      resume,
+      canUseTool,
+      config,
+      verbose,
+      store,
+      out: process.stdout,
+    });
+  }
 
   const abortController = new AbortController();
   const sdkQuery = query({

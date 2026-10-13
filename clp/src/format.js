@@ -64,8 +64,11 @@ export function formatMessage(message, ctx) {
 
   switch (message.type) {
     case 'system': {
-      if (message.subtype === 'init' && verbose) {
-        out.write(`· session ${message.session_id} — model ${message.model}, cwd ${message.cwd}\n`);
+      if (message.subtype === 'init') {
+        out.write(`Session: ${message.session_id}\n`);
+        if (verbose) {
+          out.write(`· model ${message.model}, cwd ${message.cwd}\n`);
+        }
       }
       return;
     }

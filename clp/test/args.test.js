@@ -26,6 +26,12 @@ test('parses --session <id>', () => {
   assert.equal(args.prompt, 'Continue working');
 });
 
+test('parses --interactive and -i', () => {
+  assert.equal(parseArgs(['--interactive']).interactive, true);
+  assert.equal(parseArgs(['-i', 'hi']).interactive, true);
+  assert.equal(parseArgs(['hi']).interactive, false);
+});
+
 test('parses --verbose and -v', () => {
   assert.equal(parseArgs(['--verbose', 'hi']).verbose, true);
   assert.equal(parseArgs(['-v', 'hi']).verbose, true);

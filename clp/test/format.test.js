@@ -16,6 +16,24 @@ test('truncate clips long strings with an ellipsis', () => {
   assert.equal(truncate('abcdefghij', 5), 'abcde…');
 });
 
+test('prints the session id on init even without --verbose', () => {
+  const { lines, out } = capture();
+  formatMessage(
+    { type: 'system', subtype: 'init', session_id: 'sess-123', model: 'claude-x', cwd: '/proj' },
+    { out, verbose: false },
+  );
+  assert.equal(lines.join(''), 'Session: sess-123\n');
+});
+
+test('shows model/cwd detail on init only in --verbose', () => {
+  const { lines, out } = capture();
+  formatMessage(
+    { type: 'system', subtype: 'init', session_id: 'sess-123', model: 'claude-x', cwd: '/proj' },
+    { out, verbose: true },
+  );
+  assert.equal(lines.join(''), 'Session: sess-123\n· model claude-x, cwd /proj\n');
+});
+
 test('renders assistant text as "Claude: ..."', () => {
   const { lines, out } = capture();
   formatMessage(

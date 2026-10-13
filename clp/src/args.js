@@ -1,8 +1,9 @@
-export const USAGE = `Usage: clp [options] "<prompt>"
+export const USAGE = `Usage: clp [options] ["<prompt>"]
 
 Options:
-  --resume            Resume the most recent session for this project
-  --session <id>      Resume a specific session by id
+  --resume             Resume the most recent session for this project
+  --session <id>       Resume a specific session by id
+  --interactive, -i    Stay open for a back-and-forth conversation
   --verbose, -v        Show detailed event output
   --help, -h           Show this help
 
@@ -11,6 +12,9 @@ Examples:
   clp --resume "Continue fixing the tests"
   clp --session abc123 "Continue working"
   echo "Fix the lint errors" | clp
+  clp                       # interactive, prompts for input
+  clp -i "Fix the tests"    # interactive, starting from a prompt
+  clp -i --resume           # continue a prior session interactively
 `;
 
 export class ArgsError extends Error {}
@@ -20,6 +24,7 @@ export function parseArgs(argv) {
     resume: false,
     sessionId: null,
     verbose: false,
+    interactive: false,
     help: false,
     promptParts: [],
   };
@@ -41,6 +46,10 @@ export function parseArgs(argv) {
       case '-v':
         result.verbose = true;
         break;
+      case '--interactive':
+      case '-i':
+        result.interactive = true;
+        break;
       case '--help':
       case '-h':
         result.help = true;
@@ -61,6 +70,7 @@ export function parseArgs(argv) {
     resume: result.resume,
     sessionId: result.sessionId,
     verbose: result.verbose,
+    interactive: result.interactive,
     help: result.help,
     prompt: result.promptParts.length ? result.promptParts.join(' ') : null,
   };
