@@ -91,9 +91,31 @@ alias nvimconf="cd ~/.config/nvim && nvim"
 alias cd-nvim="cd ~/.config/nvim/"
 alias cbashrc="cat ~/.bashrc"
 alias reload="source ~/.bashrc && tmux source-file ~/.tmux.conf"
-alias thelp="glow $DEVDIR/dotfiles/docs/tmux.md"
-alias nhelp="glow $DEVDIR/dotfiles/docs/nvim.md"
-alias ahelp="glow $DEVDIR/dotfiles/docs/azurite.md"
+DOTFILES_DOCS_DIR="$DEVDIR/dotfiles/docs"
+alias thelp="glow $DOTFILES_DOCS_DIR/tmux.md"
+alias nhelp="glow $DOTFILES_DOCS_DIR/nvim.md"
+alias ahelp="glow $DOTFILES_DOCS_DIR/azurite.md"
+alias chelp="glow $DOTFILES_DOCS_DIR/clp.md"
+
+# Bare `help` lists the *help aliases and renders every doc in docs/.
+# Any args fall through to the bash builtin, because ble.sh calls `help <name>`
+# internally and `help cd` etc. must keep working.
+help() {
+  if (($#)); then
+    builtin help "$@"
+    return
+  fi
+
+  local help_aliases doc
+  help_aliases=$(alias | sed -nE "s|^alias ([a-z]+help)='glow $DOTFILES_DOCS_DIR/(.+)'$|  \1  ->  \2|p")
+  {
+    printf '# Help aliases\n\n```\n%s\n```\n\n' "$help_aliases"
+    for doc in "$DOTFILES_DOCS_DIR"/*.md; do
+      cat "$doc"
+      printf '\n\n---\n\n'
+    done
+  } | glow -p -
+}
 
 # Point the az CLI at local Azurite for this shell (see docs/azurite.md)
 alias azconn='export AZURE_STORAGE_CONNECTION_STRING="$AZURITE_CONNECTION_STRING" && echo "az CLI connected to local Azurite (devstoreaccount1)"'
