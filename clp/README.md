@@ -34,6 +34,9 @@ echo "Fix the lint errors" | clp
 clp                       # no prompt + a real terminal: prompts for input
 clp -i "Tell me a joke"   # starts from a prompt, then keeps the conversation going
 clp -i --resume           # continue a prior session interactively
+
+# Skip permission prompts entirely for this run
+clp --allow-all "Run the full test suite and fix failures"
 ```
 
 | Flag | Meaning |
@@ -41,6 +44,7 @@ clp -i --resume           # continue a prior session interactively
 | `--resume` | Resume the most recent session recorded for the current directory |
 | `--session <id>` | Resume a specific session by id |
 | `--interactive`, `-i` | Stay open for a back-and-forth conversation instead of exiting after one reply |
+| `--allow-all`, `-a` | Skip permission prompts for this run (see [Permissions](#permissions)) |
 | `--verbose`, `-v` | Show tool inputs/outputs, session/model info, and cost/duration in full |
 | `--help`, `-h` | Print usage |
 
@@ -106,7 +110,26 @@ stdin, so piping a prompt in (`echo "..." | clp`) doesn't interfere with
 answering permission prompts. If no terminal is available at all (e.g.
 running fully non-interactively), the request is denied by default — this
 can be changed with the `nonInteractiveDefault` config option below, but
-`clp` never grants blanket/unrestricted permissions automatically.
+`clp` never grants blanket/unrestricted permissions automatically on its
+own.
+
+### `--allow-all`
+
+`--allow-all` (`-a`) is an explicit, per-run opt-in that skips permission
+prompts entirely — no `canUseTool` callback is even installed, so neither
+`y`/`n`/`a` prompts nor the `nonInteractiveDefault` fallback apply. It prints
+a one-line warning at startup so it's never silent:
+
+```
+⚠ --allow-all: permission prompts are disabled for this run.
+```
+
+Under the hood this sets `permissionMode: 'bypassPermissions'` and
+`allowDangerouslySkipPermissions: true` for the Agent SDK — any explicit
+`ask` rule in your Claude Code settings still prompts, since those are rules
+you configured deliberately; this flag only removes the *default* "ask
+before anything not already allowed" behavior. Use it for sandboxed/CI runs
+or when you've already reviewed what the prompt will do — not as a default.
 
 ## Session management
 

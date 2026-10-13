@@ -32,6 +32,12 @@ test('parses --interactive and -i', () => {
   assert.equal(parseArgs(['hi']).interactive, false);
 });
 
+test('parses --allow-all and -a', () => {
+  assert.equal(parseArgs(['--allow-all', 'hi']).allowAll, true);
+  assert.equal(parseArgs(['-a', 'hi']).allowAll, true);
+  assert.equal(parseArgs(['hi']).allowAll, false);
+});
+
 test('parses --verbose and -v', () => {
   assert.equal(parseArgs(['--verbose', 'hi']).verbose, true);
   assert.equal(parseArgs(['-v', 'hi']).verbose, true);

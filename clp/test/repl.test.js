@@ -49,7 +49,7 @@ test('REPL carries a second typed message into the same session', async () => {
     initialPrompt: 'tell me a knock knock joke',
     project: '/tmp/clp-repl-test',
     resume: undefined,
-    canUseTool: async () => ({ behavior: 'allow' }),
+    permissionOptions: { permissionMode: 'default', canUseTool: async () => ({ behavior: 'allow' }) },
     config: { truncateLength: 300 },
     verbose: false,
     store,
@@ -74,6 +74,49 @@ test('REPL carries a second typed message into the same session', async () => {
   assert.equal(store.projects['/tmp/clp-repl-test'].lastSessionId, 'sess-1');
 });
 
+test('REPL forwards permissionOptions (e.g. --allow-all bypass) into query() options', async () => {
+  const stdin = new PassThrough();
+  const { lines, out } = capture();
+  const store = { projects: {} };
+
+  let capturedOptions;
+  const spyingQueryFn = (params) => {
+    capturedOptions = params.options;
+    return fakeQueryFactory(['ok'])(params);
+  };
+
+  const resultPromise = runRepl({
+    initialPrompt: 'do the thing',
+    project: '/tmp/clp-repl-test-3',
+    resume: undefined,
+    permissionOptions: { permissionMode: 'bypassPermissions', allowDangerouslySkipPermissions: true },
+    config: { truncateLength: 300 },
+    verbose: false,
+    store,
+    out,
+    stdin,
+    queryFn: spyingQueryFn,
+  });
+
+  // capturedOptions is set synchronously on the first queryFn() call, but we
+  // still need the conversation to end for resultPromise to resolve — retry
+  // the exit line past the same readline-attach race as the test above.
+  await waitFor(() => lines.join('').includes('ok'));
+  let settled = false;
+  resultPromise.then(() => {
+    settled = true;
+  });
+  while (!settled) {
+    stdin.write('/exit\n');
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  }
+  await resultPromise;
+
+  assert.equal(capturedOptions.permissionMode, 'bypassPermissions');
+  assert.equal(capturedOptions.allowDangerouslySkipPermissions, true);
+  assert.equal(capturedOptions.canUseTool, undefined);
+});
+
 test('REPL prompts for input immediately when no initial prompt is given', async () => {
   const stdin = new PassThrough();
   const { lines, out } = capture();
@@ -83,7 +126,7 @@ test('REPL prompts for input immediately when no initial prompt is given', async
     initialPrompt: null,
     project: '/tmp/clp-repl-test-2',
     resume: undefined,
-    canUseTool: async () => ({ behavior: 'allow' }),
+    permissionOptions: { permissionMode: 'default', canUseTool: async () => ({ behavior: 'allow' }) },
     config: { truncateLength: 300 },
     verbose: false,
     store,

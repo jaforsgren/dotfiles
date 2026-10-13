@@ -19,7 +19,8 @@ function userMessage(text) {
  * @param {string|null} deps.initialPrompt - sent as the first turn, if given
  * @param {string} deps.project - cwd for the session
  * @param {string} [deps.resume] - session id to resume
- * @param {import('@anthropic-ai/claude-agent-sdk').CanUseTool} deps.canUseTool
+ * @param {object} deps.permissionOptions - either `{ permissionMode: 'default', canUseTool }`
+ *   or, for `--allow-all`, `{ permissionMode: 'bypassPermissions', allowDangerouslySkipPermissions: true }`
  * @param {{ truncateLength: number }} deps.config
  * @param {boolean} deps.verbose
  * @param {object} deps.store - session/approval store, mutated and saved after each turn
@@ -30,7 +31,7 @@ export async function runRepl({
   initialPrompt,
   project,
   resume,
-  canUseTool,
+  permissionOptions,
   config,
   verbose,
   store,
@@ -75,9 +76,8 @@ export async function runRepl({
     options: {
       cwd: project,
       settingSources: ['user', 'project', 'local'],
-      permissionMode: 'default',
-      canUseTool,
       abortController,
+      ...permissionOptions,
       ...(resume ? { resume } : {}),
     },
   });

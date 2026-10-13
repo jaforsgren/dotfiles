@@ -84,12 +84,19 @@ export async function main(argv = process.argv.slice(2)) {
     },
   });
 
+  if (args.allowAll) {
+    process.stdout.write('⚠ --allow-all: permission prompts are disabled for this run.\n');
+  }
+  const permissionOptions = args.allowAll
+    ? { permissionMode: 'bypassPermissions', allowDangerouslySkipPermissions: true }
+    : { permissionMode: 'default', canUseTool };
+
   if (interactive) {
     return runRepl({
       initialPrompt: prompt,
       project,
       resume,
-      canUseTool,
+      permissionOptions,
       config,
       verbose,
       store,
@@ -103,9 +110,8 @@ export async function main(argv = process.argv.slice(2)) {
     options: {
       cwd: project,
       settingSources: ['user', 'project', 'local'],
-      permissionMode: 'default',
-      canUseTool,
       abortController,
+      ...permissionOptions,
       ...(resume ? { resume } : {}),
     },
   });

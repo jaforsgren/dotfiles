@@ -4,6 +4,7 @@ Options:
   --resume             Resume the most recent session for this project
   --session <id>       Resume a specific session by id
   --interactive, -i    Stay open for a back-and-forth conversation
+  --allow-all, -a      Skip permission prompts for this run (dangerous)
   --verbose, -v        Show detailed event output
   --help, -h           Show this help
 
@@ -15,6 +16,7 @@ Examples:
   clp                       # interactive, prompts for input
   clp -i "Fix the tests"    # interactive, starting from a prompt
   clp -i --resume           # continue a prior session interactively
+  clp --allow-all "Run the full test suite and fix failures"
 `;
 
 export class ArgsError extends Error {}
@@ -25,6 +27,7 @@ export function parseArgs(argv) {
     sessionId: null,
     verbose: false,
     interactive: false,
+    allowAll: false,
     help: false,
     promptParts: [],
   };
@@ -50,6 +53,10 @@ export function parseArgs(argv) {
       case '-i':
         result.interactive = true;
         break;
+      case '--allow-all':
+      case '-a':
+        result.allowAll = true;
+        break;
       case '--help':
       case '-h':
         result.help = true;
@@ -71,6 +78,7 @@ export function parseArgs(argv) {
     sessionId: result.sessionId,
     verbose: result.verbose,
     interactive: result.interactive,
+    allowAll: result.allowAll,
     help: result.help,
     prompt: result.promptParts.length ? result.promptParts.join(' ') : null,
   };
