@@ -112,10 +112,42 @@ export VISUAL=nvim
 
 killport() { kill -9 $(lsof -t -i:$1); }
 
-bdm() {
-  local current
+GIT_MAIN_BRANCH=main
+
+_branches_merged() {
+  git branch --merged "$1" --format='%(refname:short)'
+}
+
+_branches_upstream_gone() {
+  git for-each-ref refs/heads --format='%(refname:short) %(upstream:track)' | awk '$2=="[gone]"{print $1}'
+}
+
+# Squash merges leave no ancestry, so compare content instead: collapse each branch
+# into one temporary commit on its merge-base and let git cherry look for an
+# equivalent patch on base. Misses branches with conflict fixes or post-merge commits.
+_branches_squash_merged() {
+  local base=$1 branch merge_base squashed
+  git for-each-ref refs/heads --format='%(refname:short)' | while read -r branch; do
+    [[ $branch == "$base" ]] && continue
+    merge_base=$(git merge-base "$base" "$branch") || continue
+    squashed=$(git commit-tree "$branch^{tree}" -p "$merge_base" -m _)
+    [[ $(git cherry "$base" "$squashed") == -* ]] && echo "$branch"
+  done
+}
+
+merged_branches() {
+  local base=${1:-$GIT_MAIN_BRANCH} current
   current=$(git branch --show-current)
-  git branch --merged main | sed 's/^[* ] //' | grep -vx -e "main" -e "$current" | xargs -r git branch -D
+  git fetch --prune --quiet
+  {
+    _branches_merged "$base"
+    _branches_upstream_gone
+    _branches_squash_merged "$base"
+  } | sort -u | grep -vx -e "$base" -e "$current"
+}
+
+bdm() {
+  merged_branches "$@" | xargs -r git branch -D
 }
 
 calc() { bc -l <<< "$*"; }

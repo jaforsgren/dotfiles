@@ -82,6 +82,8 @@ cln() {
   rm -rf -- "$scratch_dir"
 }
 
+alias clr='clp -a "ok, review the current branch against main , like a pr . organise it in file paths -> line numbers. write to a markdown ./diff-report.md in swedish. short senances. lots of whitespace"'
+
 # Misc setup stuff
 # ---------------------------------------------
 alias pipenv='python3.6 -m pipenv'
@@ -163,8 +165,7 @@ alias consolelogs="gitconsole"
 
 alias cm="git commit"
 alias pull="git pull && lg"
-alias brclean="git branch -D $(git branch --merged | grep -v \* | xargs)"
-alias bm="git branch --merged main"
+alias bm="merged_branches"
 alias brm="bdm"
 alias rebased="git pull --rebase origin develop"
 alias rbd="rebased"
