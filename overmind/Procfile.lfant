@@ -1,0 +1,15 @@
+sejfa-appapi: cd-sejfa && make run-appapi
+sejfa-worker: cd-sejfa && make run-worker
+claimdocs-grpc: cd-cd && make run-grpc
+claimdocs-worker: cd-cd && make run-worker
+iibproxy-grpc: cd-bts && cd iib-proxy && DEVELOPHUB_LOCAL_PACKAGES=false make run-grpc
+insurify-grpc: cd-bts && cd Insurify && make run-grpc
+insurify-worker: cd-bts && cd Insurify && make run-worker
+payments-grpc: cd-bts && cd payments && DEVELOPHUB_LOCAL_PACKAGES=false make run-grpc
+payments-webapi: cd-bts && cd payments && DEVELOPHUB_LOCAL_PACKAGES=false make run-webapi
+payments-worker: cd-bts && cd payments && DEVELOPHUB_LOCAL_PACKAGES=false make run-worker
+persona-grpc: cd-pers && make DEVELOPHUB_LOCAL_PACKAGES=false run-grpc
+persona-worker: cd-pers && make DEVELOPHUB_LOCAL_PACKAGES=false run-worker
+persona-webhook: cd-pers && make DEVELOPHUB_LOCAL_PACKAGES=false run-webhook
+whisper-grpc: cd-bts && cd whisper && DEVELOPHUB_LOCAL_PACKAGES=false make run-grpc
+whisper-worker: cd-bts && cd whisper && DEVELOPHUB_LOCAL_PACKAGES=false make run-worker

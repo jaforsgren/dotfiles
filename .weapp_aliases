@@ -150,6 +150,218 @@ alias rworkers="run-workers"
 alias killworkers="tmux kill-session -t bigtusksworkers"
 
 # --------------------------------------------
+# dev: overmind-managed lfant services (see overmind/Procfile.lfant)
+# --------------------------------------------
+
+DEV_OVERMIND_DIR="${ALIASES_DIR}/overmind"
+DEV_PROCFILE="${DEV_OVERMIND_DIR}/Procfile.lfant"
+DEV_QUIT_TIMEOUT_SECONDS=30
+DEV_HEALTH_TIMEOUT_SECONDS=2
+DEV_HEALTH_PATH=/healthz/ready
+# MapDevelopHubHealthChecks uses RequireHost("*:8081"), but locally each app binds a different
+# health port, so the Host header has to claim 8081 or every probe 404s.
+DEV_HEALTH_HOST_HEADER="Host: localhost:8081"
+DEV_NOT_STARTED_STATE="not started"
+DEV_DEAD_STATE=dead
+DEV_CRASH_TAIL_LINES=20
+# shellcheck source=overmind/lfant.sh
+source "${DEV_OVERMIND_DIR}/lfant.sh"
+
+_dev_usage() {
+  cat <<USAGE
+usage: dev <command> [process]
+  up               start all servers; if already up, restart only dead processes
+  down             stop everything
+  ls               list every process with overmind state and health check result
+  logs [process]   open lnav with combined logs, or just one process
+  attach <process> interactive tmux connection to a process (restarts it first if dead)
+  status           show process status
+  clear            clear the log file
+  help             full docs (docs/dev.md)
+process names (partial match ok): $(_dev_process_names | tr '\n' ' ')
+USAGE
+}
+
+_dev_process_names() {
+  cut -d: -f1 "$DEV_PROCFILE"
+}
+
+_dev_process_dir() {
+  "${DEV_OVERMIND_DIR}/process-dir.sh" "$1"
+}
+# Reads the Kestrel "Health" endpoint port from the app's own development appsettings.
+_dev_health_port() {
+  local dir settings
+  dir="$(_dev_process_dir "$1")"
+  for settings in "${dir}/appsettings.Development.json" "${dir}/appsettings.development.json"; do
+    if [[ -f "$settings" ]]; then
+      jq -r '.Kestrel.Endpoints.Health.Url // empty' "$settings" 2>/dev/null | sed -E 's|.*:([0-9]+).*|\1|'
+      return
+    fi
+  done
+}
+
+_dev_health() {
+  local port="$1"
+  local code
+
+  if [[ -z "$port" ]]; then
+    printf "\033[33m%-10s\033[0m" "no port"
+    return
+  fi
+
+  code="$(curl -s -o /dev/null -w '%{http_code}' --max-time "$DEV_HEALTH_TIMEOUT_SECONDS" \
+    -H "$DEV_HEALTH_HOST_HEADER" "http://localhost:${port}${DEV_HEALTH_PATH}")"
+  case "$code" in
+    200) printf "\033[32m%-10s\033[0m" "healthy" ;;
+    503) printf "\033[31m%-10s\033[0m" "unhealthy" ;;
+    000) printf "\033[90m%-10s\033[0m" "down" ;;
+    *)   printf "\033[33m%-10s\033[0m" "http ${code}" ;;
+  esac
+}
+
+_dev_state_color() {
+  case "$1" in
+    running) printf "\033[32m%-12s\033[0m" "$1" ;;
+    "$DEV_NOT_STARTED_STATE") printf "\033[90m%-12s\033[0m" "$1" ;;
+    *) printf "\033[31m%-12s\033[0m" "$1" ;;
+  esac
+}
+
+_dev_ls() {
+  local statuses="" process state port
+
+  if overmind_lfant_is_running; then
+    statuses="$(overmind_lfant_statuses)"
+  else
+    echo "overmind is not running"
+  fi
+
+  printf "  %-18s %-12s %-10s %s\n" "PROCESS" "STATE" "HEALTH" "PORT"
+  while read -r process; do
+    state="$(awk -v name="$process" '$1 == name { print $2 }' <<<"$statuses")"
+    port="$(_dev_health_port "$process")"
+    printf "  %-18s %s %s %s\n" "$process" \
+      "$(_dev_state_color "${state:-$DEV_NOT_STARTED_STATE}")" "$(_dev_health "$port")" "${port:--}"
+  done < <(_dev_process_names)
+}
+
+# Resolves a partial name ("appapi") to one Procfile process; fails when ambiguous.
+_dev_resolve_process() {
+  local query="$1"
+  local names matches
+  names="$(_dev_process_names)"
+
+  if grep -qxF "$query" <<<"$names"; then
+    echo "$query"
+    return
+  fi
+
+  matches="$(grep -F "$query" <<<"$names" || true)"
+  case "$(grep -c . <<<"$matches")" in
+    1) echo "$matches" ;;
+    0) echo "dev: no process matches '${query}'" >&2; return 1 ;;
+    *) echo "dev: '${query}' is ambiguous:" $matches >&2; return 1 ;;
+  esac
+}
+
+_dev_process_state() {
+  overmind_lfant_statuses | awk -v name="$1" '$1 == name { print $2 }'
+}
+
+# Log lines are "<name><padding> | <line>" wrapped in ANSI color codes, so strip those before matching.
+_dev_process_log_tail() {
+  local process="$1"
+  LC_ALL=C sed -E $'s/\e\\[[0-9;]*m//g' "$OVERMIND_LFANT_LOG_FILE" \
+    | grep -E "^${process}[[:space:]]+\|" | tail -n "$DEV_CRASH_TAIL_LINES"
+}
+
+# overmind keeps a dead process's pane around in a read-only "Pane is dead" state, so show
+# why it died, then restart it to get an interactive pane.
+_dev_restart_if_dead() {
+  local process="$1"
+
+  [[ "$(_dev_process_state "$process")" == "$DEV_DEAD_STATE" ]] || return 0
+
+  echo "dev: ${process} is dead, last ${DEV_CRASH_TAIL_LINES} log lines:"
+  _dev_process_log_tail "$process"
+  echo "dev: restarting ${process}"
+  overmind restart -s "$OVERMIND_LFANT_SOCKET" "$process"
+}
+
+_dev_require_running() {
+  if ! overmind_lfant_is_running; then
+    echo "dev: overmind is not running (start it with: dev up)" >&2
+    return 1
+  fi
+}
+
+_dev_down() {
+  if overmind_lfant_is_running; then
+    overmind quit -s "$OVERMIND_LFANT_SOCKET"
+    local waited=0
+    while overmind_lfant_is_running && [[ "$waited" -lt "$DEV_QUIT_TIMEOUT_SECONDS" ]]; do
+      sleep 1
+      waited=$((waited + 1))
+    done
+    if overmind_lfant_is_running; then
+      echo "dev: overmind did not quit within ${DEV_QUIT_TIMEOUT_SECONDS}s, killing processes" >&2
+      overmind kill -s "$OVERMIND_LFANT_SOCKET"
+    fi
+  fi
+  tmux kill-session -t "=${OVERMIND_LFANT_SESSION}" 2>/dev/null || true
+  echo "dev: stopped"
+}
+
+dev() {
+  local command="${1:-}"
+  local process
+
+  case "$command" in
+    up)
+      "${ALIASES_DIR}/tmux-sessions/start-overmind.sh"
+      ;;
+    down)
+      _dev_down
+      ;;
+    logs)
+      if [[ -n "${2:-}" ]]; then
+        process="$(_dev_resolve_process "$2")" || return 1
+        lnav -c ":filter-in ^${process}\s+\|" "$OVERMIND_LFANT_LOG_FILE"
+      else
+        lnav "$OVERMIND_LFANT_LOG_FILE"
+      fi
+      ;;
+    attach)
+      [[ -n "${2:-}" ]] || { _dev_usage >&2; return 1; }
+      _dev_require_running || return 1
+      process="$(_dev_resolve_process "$2")" || return 1
+      _dev_restart_if_dead "$process"
+      # overmind attaches with its own tmux server; unset TMUX so it works from inside a tmux pane.
+      TMUX= overmind connect -s "$OVERMIND_LFANT_SOCKET" "$process"
+      ;;
+    ls)
+      _dev_ls
+      ;;
+    status)
+      _dev_require_running || return 1
+      overmind status -s "$OVERMIND_LFANT_SOCKET"
+      ;;
+    help)
+      glow  "${DOTFILES_DOCS_DIR}/dev.md"
+      ;;
+    clear)
+      : > "$OVERMIND_LFANT_LOG_FILE"
+      echo "dev: cleared ${OVERMIND_LFANT_LOG_FILE}"
+      ;;
+    *)
+      _dev_usage >&2
+      return 1
+      ;;
+  esac
+}
+
+# --------------------------------------------
 # local service status check
 # --------------------------------------------
 
@@ -168,6 +380,10 @@ alias status='function _status(){
     "iib-proxy / GrpcServer:1083"
     "claim-documentation / Worker:8092"
     "claim-documentation / GrpcServer:8091"
+    "sejfa Internal / GrpcServer:8111"
+    "sejfa Internal / Worker:8281" 
+    "Hubs Backend / GrpcServer:8891" 
+    "Hubs Backend / Worker:8881" 
   );
   for entry in "${services[@]}"; do
     local name="${entry%%:*}";
