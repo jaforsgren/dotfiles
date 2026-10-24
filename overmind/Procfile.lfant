@@ -1,5 +1,5 @@
-sejfa-appapi: cd-sejfa && make run-appapi
-sejfa-worker: cd-sejfa && make run-worker
+sejfa-appapi: cd-sejfa && DEVELOPHUB_LOCAL_PACKAGES=false make run-appapi
+sejfa-worker: cd-sejfa && DEVELOPHUB_LOCAL_PACKAGES=false make run-worker
 claimdocs-grpc: cd-cd && make run-grpc
 claimdocs-worker: cd-cd && make run-worker
 iibproxy-grpc: cd-bts && cd iib-proxy && DEVELOPHUB_LOCAL_PACKAGES=false make run-grpc

@@ -1,0 +1,41 @@
+{
+    "$schema": "https://lnav.org/schemas/format-v1.schema.json",
+    "overmind_log": {
+        "title": "Overmind combined log",
+        "description": "overmind echo output stamped by overmind/stamp-log.pl, with .NET simple console log levels.",
+        "url": "https://github.com/DarthSim/overmind",
+        "regex": {
+            "std": {
+                "pattern": "^(?<timestamp>\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}) (?<process>[\\w-]+)\\s+\\| (?:(?<level>trce|dbug|info|warn|fail|crit): )?(?<body>.*)$"
+            }
+        },
+        "timestamp-format": ["%Y-%m-%dT%H:%M:%S.%L"],
+        "level-field": "level",
+        "level": {
+            "trace": "^trce$",
+            "debug": "^dbug$",
+            "info": "^info$",
+            "warning": "^warn$",
+            "error": "^fail$",
+            "critical": "^crit$"
+        },
+        "value": {
+            "process": {
+                "kind": "string",
+                "identifier": true
+            }
+        },
+        "sample": [
+            {
+                "line": "2026-10-24T19:55:29.937 whisper-worker   | info: Microsoft.Hosting.Lifetime[14] Now listening on: http://[::]:8391"
+            },
+            {
+                "line": "2026-10-24T19:55:30.112 whisper-grpc     | fail: Whisper.Presentation.GrpcServer[0] Something broke",
+                "level": "error"
+            },
+            {
+                "line": "2026-10-24T19:55:30.500 sejfa-worker     | Building..."
+            }
+        ]
+    }
+}

@@ -269,11 +269,10 @@ _dev_process_state() {
   overmind_lfant_statuses | awk -v name="$1" '$1 == name { print $2 }'
 }
 
-# Log lines are "<name><padding> | <line>" wrapped in ANSI color codes, so strip those before matching.
+# Log lines are "<timestamp> <name><padding> | <line>" (see overmind/stamp-log.pl).
 _dev_process_log_tail() {
   local process="$1"
-  LC_ALL=C sed -E $'s/\e\\[[0-9;]*m//g' "$OVERMIND_LFANT_LOG_FILE" \
-    | grep -E "^${process}[[:space:]]+\|" | tail -n "$DEV_CRASH_TAIL_LINES"
+  grep -E "^[^ ]+ ${process}[[:space:]]+\|" "$OVERMIND_LFANT_LOG_FILE" | tail -n "$DEV_CRASH_TAIL_LINES"
 }
 
 # overmind keeps a dead process's pane around in a read-only "Pane is dead" state, so show
@@ -327,9 +326,9 @@ dev() {
     logs)
       if [[ -n "${2:-}" ]]; then
         process="$(_dev_resolve_process "$2")" || return 1
-        lnav -c ":filter-in ^${process}\s+\|" "$OVERMIND_LFANT_LOG_FILE"
+        lnav -I "$OVERMIND_LFANT_LNAV_CONFIG_DIR" -c ":filter-expr :process = '${process}'" "$OVERMIND_LFANT_LOG_FILE"
       else
-        lnav "$OVERMIND_LFANT_LOG_FILE"
+        lnav -I "$OVERMIND_LFANT_LNAV_CONFIG_DIR" "$OVERMIND_LFANT_LOG_FILE"
       fi
       ;;
     attach)

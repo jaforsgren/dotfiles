@@ -53,7 +53,23 @@ whisper) has `run-*` make targets.
 ## tmux session `overmind`
 
 - window 1 `apps` - `overmind start` (`--any-can-die`, so one crash doesn't stop the rest)
-- window 2 `logs` - `overmind echo >> <log file>` loop (small pane) + lnav on the log
+- window 2 `logs` - `overmind echo | stamp-log.pl >> <log file>` loop (small pane) + lnav on the log
+
+## Log format and lnav
+
+Every line in the combined log is `<timestamp> <process> | <line>`: `overmind/stamp-log.pl`
+adds the timestamp and strips color/cursor escape codes, and `procshell.sh` switches .NET
+console logging to single line (`info: Category[0] message`). lnav loads the
+`overmind_log` format from `overmind/lnav` (`-I`), so it opens in LOG view with levels
+(`fail` = error, `crit` = critical) and a `process` field.
+
+Useful lnav keys:
+
+- `e` / `E` - next / previous error, `w` / `W` - next / previous warning
+- `h` / `l` (or arrows) - scroll left / right; `0` back to the start of the line
+- `G` - jump to the end and keep following new lines
+- `:filter-expr :process = 'persona-grpc'` - only one process (what `dev logs <process>` does)
+- `:set-min-log-level warning` - hide info/debug
 
 ## Health checks
 
@@ -70,7 +86,9 @@ its `Kestrel.Endpoints.Health.Url` port from `appsettings.Development.json` and 
 | --- | --- |
 | Procfile (process list) | `~/DEV/dotfiles/overmind/Procfile.lfant` |
 | Shared paths + overmind status/alias helpers | `~/DEV/dotfiles/overmind/lfant.sh` |
-| Process shell (loads aliases) | `~/DEV/dotfiles/overmind/procshell.sh` |
+| Process shell (loads aliases, plain build output, single-line .NET logs) | `~/DEV/dotfiles/overmind/procshell.sh` |
+| Log stamper (timestamps, strips escape codes) | `~/DEV/dotfiles/overmind/stamp-log.pl` |
+| lnav format | `~/DEV/dotfiles/overmind/lnav/formats/overmind/overmind_log.json` |
 | Process -> project dir resolver (used by `dev ls`) | `~/DEV/dotfiles/overmind/process-dir.sh` |
 | tmux session script | `~/DEV/dotfiles/tmux-sessions/start-overmind.sh` |
 | `dev` function | `~/DEV/dotfiles/.weapp_aliases` |

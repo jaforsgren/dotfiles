@@ -8,6 +8,8 @@ OVERMIND_LFANT_LOG_FILE=/tmp/overmind-lfant.log
 OVERMIND_LFANT_PROCFILE_SNAPSHOT=/tmp/overmind-lfant.Procfile
 # Sourced into interactive shells too, where cd may be wrapped or CDPATH set and print extra output.
 OVERMIND_LFANT_DOTFILES_DIR="$(CDPATH= builtin cd -- "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null && builtin pwd)"
+# Passed to lnav -I so it loads the overmind_log format (formats/overmind/overmind_log.json).
+OVERMIND_LFANT_LNAV_CONFIG_DIR="${OVERMIND_LFANT_DOTFILES_DIR}/overmind/lnav"
 
 # Procfile lines use the cd-* aliases, which non-interactive shells don't have by default.
 overmind_lfant_load_aliases() {

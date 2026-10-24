@@ -23,7 +23,8 @@ ECHO_RETRY_SECONDS=2
 # `command` skips interactive rm/cp aliases (e.g. rm -i) in the pane's shell.
 OVERMIND_START_CMD="command rm -f '${SOCKET}' && command cp '${PROCFILE}' '${PROCFILE_SNAPSHOT}' && overmind start -N --any-can-die -H '${OVERMIND_DIR}/procshell.sh' -f '${PROCFILE}' -d '${APP_ROOT}' -s '${SOCKET}'"
 # overmind echo exits when the master isn't up yet or restarts, so keep reattaching.
-ECHO_LOOP_CMD="while true; do overmind echo -s '${SOCKET}' >> '${LOG_FILE}' 2>/dev/null; sleep ${ECHO_RETRY_SECONDS}; done"
+# stamp-log.pl adds the timestamps lnav needs and strips color codes.
+ECHO_LOOP_CMD="while true; do overmind echo -s '${SOCKET}' 2>/dev/null | '${OVERMIND_DIR}/stamp-log.pl' >> '${LOG_FILE}'; sleep ${ECHO_RETRY_SECONDS}; done"
 
 window_exists() {
     tmux list-windows -t "=${SESSION}" -F '#{window_name}' | grep -qxF "$1"
@@ -32,7 +33,7 @@ window_exists() {
 create_logs_window() {
     tmux new-window -d -t "=${SESSION}" -n "$LOGS_WINDOW" -c "$APP_ROOT"
     tmux send-keys -t "=${SESSION}:${LOGS_WINDOW}" "$ECHO_LOOP_CMD" C-m
-    tmux split-window -t "=${SESSION}:${LOGS_WINDOW}" -p 90 -c "$APP_ROOT" "lnav '${LOG_FILE}'"
+    tmux split-window -t "=${SESSION}:${LOGS_WINDOW}" -p 90 -c "$APP_ROOT" "lnav -I '${OVERMIND_LFANT_LNAV_CONFIG_DIR}' '${LOG_FILE}'"
 }
 
 # A pane still running the previous overmind (e.g. stuck shutting down) would swallow the
