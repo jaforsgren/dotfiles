@@ -148,6 +148,8 @@ alias run-workers="cd-lfant && ./bigtusk-workers.sh"
 alias rwork="run-workers"
 alias rworkers="run-workers"
 alias killworkers="tmux kill-session -t bigtusksworkers"
+alias debug="make debug-grpc"
+alias debugw="make debug-worker"
 
 # --------------------------------------------
 # dev: overmind-managed lfant services (see overmind/Procfile.lfant)
