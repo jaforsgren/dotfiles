@@ -30,6 +30,7 @@ Session: `ta overmind`
 - `apps` — overmind (`--any-can-die`; crashes are isolated).
 - `logs` — log collector + lnav.
 - Detach from process: tmux prefix twice, then `d`.
+- Never close a process's window (`prefix x` / `prefix &`) while attached: overmind can't recreate it. The process then shows as `no window` in `dev ls`, `dev a` and `dev r` can't reach it, and only `dev down && dev up` brings it back.
 
 **lnav shortcuts**
 

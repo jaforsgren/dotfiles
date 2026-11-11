@@ -165,6 +165,8 @@ DEV_HEALTH_PATH=/healthz/ready
 DEV_HEALTH_HOST_HEADER="Host: localhost:8081"
 DEV_NOT_STARTED_STATE="not started"
 DEV_DEAD_STATE=dead
+DEV_WINDOWLESS_STATE="no window"
+DEV_WINDOWLESS_REMEDY="its tmux window was closed, overmind can't restart it. Run: dev down && dev up"
 DEV_CRASH_TAIL_LINES=20
 # shellcheck source=overmind/lfant.sh
 source "${DEV_OVERMIND_DIR}/lfant.sh"
@@ -231,10 +233,11 @@ _dev_state_color() {
 }
 
 _dev_ls() {
-  local statuses="" process state port
+  local statuses="" windowless="" process state port
 
   if overmind_lfant_is_running; then
     statuses="$(overmind_lfant_statuses)"
+    windowless="$(overmind_lfant_windowless_processes)"
   else
     echo "overmind is not running"
   fi
@@ -242,10 +245,15 @@ _dev_ls() {
   printf "  %-18s %-12s %-10s %s\n" "PROCESS" "STATE" "HEALTH" "PORT"
   while read -r process; do
     state="$(awk -v name="$process" '$1 == name { print $2 }' <<<"$statuses")"
+    grep -qxF "$process" <<<"$windowless" && state="$DEV_WINDOWLESS_STATE"
     port="$(_dev_health_port "$process")"
     printf "  %-18s %s %s %s\n" "$process" \
       "$(_dev_state_color "${state:-$DEV_NOT_STARTED_STATE}")" "$(_dev_health "$port")" "${port:--}"
   done < <(_dev_process_names)
+
+  if [[ -n "$windowless" ]]; then
+    echo "dev: $(tr '\n' ' ' <<<"$windowless")- ${DEV_WINDOWLESS_REMEDY}" >&2
+  fi
 }
 
 # Resolves a partial name ("appapi") to one Procfile process; fails when ambiguous.
@@ -337,6 +345,10 @@ dev() {
       [[ -n "${2:-}" ]] || { _dev_usage >&2; return 1; }
       _dev_require_running || return 1
       process="$(_dev_resolve_process "$2")" || return 1
+      if overmind_lfant_windowless_processes | grep -qxF "$process"; then
+        echo "dev: ${process}: ${DEV_WINDOWLESS_REMEDY}" >&2
+        return 1
+      fi
       _dev_restart_if_dead "$process"
       # overmind attaches with its own tmux server; unset TMUX so it works from inside a tmux pane.
       TMUX= overmind connect -s "$OVERMIND_LFANT_SOCKET" "$process"

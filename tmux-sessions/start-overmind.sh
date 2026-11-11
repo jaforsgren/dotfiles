@@ -48,6 +48,15 @@ start_overmind_in_new_apps_window() {
     tmux move-window -r -t "=${SESSION}:"
 }
 
+warn_windowless_processes() {
+    local windowless
+    windowless="$(overmind_lfant_windowless_processes | tr '\n' ' ')"
+
+    if [[ -n "${windowless// /}" ]]; then
+        echo "Can't restart ${windowless}- their tmux windows were closed. Run 'dev down && dev up' to bring them back."
+    fi
+}
+
 restart_dead_processes() {
     local dead
     dead="$(overmind_lfant_dead_processes | tr '\n' ' ')"
@@ -102,6 +111,7 @@ if overmind_lfant_is_running; then
         exit 1
     fi
     restart_dead_processes
+    warn_windowless_processes
 else
     echo "Session ${SESSION} exists but overmind is not running, starting it"
     start_overmind_in_new_apps_window

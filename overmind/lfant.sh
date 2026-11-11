@@ -31,3 +31,12 @@ overmind_lfant_statuses() {
 overmind_lfant_dead_processes() {
   overmind_lfant_statuses | awk '$2 == "dead" { print $1 }'
 }
+
+OVERMIND_LFANT_WINDOWLESS_PID=0
+# Closing a process's tmux window (e.g. prefix+x while attached) is unrecoverable for overmind:
+# it keeps reporting "running" with PID 0, restart is a no-op and connect fails with
+# "can't find window". Only a full `dev down && dev up` brings the process back.
+overmind_lfant_windowless_processes() {
+  overmind status -s "$OVERMIND_LFANT_SOCKET" 2>/dev/null |
+    awk -v pid="$OVERMIND_LFANT_WINDOWLESS_PID" 'NR > 1 && $2 == pid && $NF == "running" { print $1 }'
+}
