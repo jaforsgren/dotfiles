@@ -198,6 +198,69 @@ alias cd-n="cd-dev && cd personal-notes"
 alias cd-dot="cd-dev && cd dotfiles"
 alias cd-d=cd-dot
 
+# notes sync
+# --------------------------------------------
+NOTES_REPOS=("$HOME/DEV/weapp-notes" "$HOME/DEV/personal-notes")
+NOTES_LINK_SCRIPTS=("$HOME/DEV/weapp-notes/link-lfant-docs.sh" "$HOME/DEV/personal-notes/link-personal-docs.sh")
+NOTES_STASH_MESSAGE="push-notes autostash"
+
+sync_notes() {
+  local script
+  for script in "${NOTES_LINK_SCRIPTS[@]}"; do
+    if [[ ! -x "$script" ]]; then
+      echo "sync-notes: skipping $script (missing or not executable)" >&2
+      continue
+    fi
+    echo "sync-notes: running $script"
+    "$script" || echo "sync-notes: $script failed" >&2
+  done
+}
+
+_push_notes_repo() {
+  local repo="$1"
+  local stashed=false
+
+  if [[ -n "$(git -C "$repo" status --porcelain)" ]]; then
+    git -C "$repo" stash push --include-untracked -m "$NOTES_STASH_MESSAGE" || return 1
+    stashed=true
+  fi
+
+  if ! git -C "$repo" pull; then
+    echo "push-notes: pull failed in $repo" >&2
+    $stashed && git -C "$repo" stash pop
+    return 1
+  fi
+
+  if $stashed; then
+    # Drop only on a clean apply so conflicting changes stay recoverable in the stash
+    if ! git -C "$repo" stash apply; then
+      echo "push-notes: stash apply conflicted in $repo, resolve manually (stash kept)" >&2
+      return 1
+    fi
+    git -C "$repo" stash drop
+  fi
+
+  git -C "$repo" add --all
+  if ! git -C "$repo" diff --cached --quiet; then
+    git -C "$repo" commit -m "docs: notes_update $(date '+%Y-%m-%d %H:%M')" || return 1
+  fi
+
+  git -C "$repo" push
+}
+
+push_notes() {
+  local repo
+  for repo in "${NOTES_REPOS[@]}"; do
+    echo "push-notes: $repo"
+    _push_notes_repo "$repo" || echo "push-notes: failed for $repo" >&2
+  done
+}
+
+alias sync-notes=sync_notes
+alias syncnotes=sync_notes
+alias push-notes=push_notes
+alias pushnotes=push_notes
+
 # docker / k8s stuff
 # --------------------------------------------
 
