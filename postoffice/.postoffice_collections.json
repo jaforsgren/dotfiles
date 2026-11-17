@@ -1,0 +1,21 @@
+{
+  "collection_paths": [
+    "/Users/johanforsgren/DEV/collections/SAPI.postman_collection.json",
+    "/Users/johanforsgren/DEV/collections/bigtusk-services.postman_collection.json",
+    "examples/servicebus-listeners.json",
+    "/Users/johanforsgren/DEV/PERSONAL/postOffice/examples/servicebus-listeners.json",
+    "/Users/johanforsgren/DEV/PERSONAL/postOffice/examples/servicebus-events.json"
+  ],
+  "environment_paths": [
+    "/Users/johanforsgren/DEV/collections/Big tusks.postman_environment.json",
+    "/Users/johanforsgren/DEV/collections/Big tusks staging.postman_environment.json"
+  ],
+  "active_collection_names": [
+    "bigtusk-services",
+    "Claim Created Events",
+    "SAPI"
+  ],
+  "active_environment_names": [
+    "Big tusks"
+  ]
+}

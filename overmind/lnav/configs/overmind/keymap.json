@@ -1,0 +1,33 @@
+{
+    "$schema": "https://lnav.org/schemas/config-v1.schema.json",
+    "ui": {
+        "keymap-defs": {
+            "default": {
+                "x30": {
+                    "command": ":clear-filter-expr"
+                },
+                "x31": {
+                    "command": ":filter-expr :process LIKE 'claimdocs-%'"
+                },
+                "x32": {
+                    "command": ":filter-expr :process LIKE 'iibproxy-%'"
+                },
+                "x33": {
+                    "command": ":filter-expr :process LIKE 'insurify-%'"
+                },
+                "x34": {
+                    "command": ":filter-expr :process LIKE 'payments-%'"
+                },
+                "x35": {
+                    "command": ":filter-expr :process LIKE 'persona-%'"
+                },
+                "x36": {
+                    "command": ":filter-expr :process LIKE 'sejfa-%'"
+                },
+                "x37": {
+                    "command": ":filter-expr :process LIKE 'whisper-%'"
+                }
+            }
+        }
+    }
+}

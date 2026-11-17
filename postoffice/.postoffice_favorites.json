@@ -1,0 +1,12 @@
+{
+  "item_ids": [
+    "SAPI/auth/LOGIN/set bearer to user",
+    "SAPI/auth/LOGIN/set bearer to user STAGING",
+    "SAPI/claims/GET/get claim",
+    "SAPI/claims/GET/get claim list",
+    "SAPI/policies/CREATE/2 offer",
+    "SAPI/policies/CREATE/3 policy",
+    "SAPI/policies/GET/get policy by id",
+    "SAPI/policies/GET/list policies"
+  ]
+}
